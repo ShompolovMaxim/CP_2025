@@ -1,30 +1,9 @@
 import copy
 import numpy as np
-from tqdm import tqdm
 import sys
+from utility.k_anonymity import is_k_anonimus
 
 sys.setrecursionlimit(6000 * 20)
-
-def is_k_anonimus_v0(df, k):
-    for current_row in df:
-        kol = 0
-        for row in df:
-            kol += (row == current_row).all()
-        if kol < k:
-            return False
-    return True
-
-def is_k_anonimus(df, k):
-    counts = dict()
-    for row in df:
-        if tuple(row.tolist()) in counts:
-            counts[tuple(row.tolist())] += 1
-        else:
-            counts[tuple(row.tolist())] = 1
-    for _, count in counts.items():
-        if count < k:
-            return False
-    return True
 
 def suppression_k_anonimity_baseline_recursive(df, k, row=0, col=0, k_suppressed=0):
     if col == 0 and row == len(df):
