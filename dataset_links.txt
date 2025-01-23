@@ -1,0 +1,2 @@
+https://www.kaggle.com/datasets/mirichoi0218/insurance/data
+https://www.kaggle.com/datasets/mbsoroush/personal-loan-dataset
