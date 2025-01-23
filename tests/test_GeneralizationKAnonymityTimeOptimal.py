@@ -5,8 +5,9 @@ sys.path.append('../')
 import unittest
 import numpy as np
 from GeneralizationKAnonymityTimeOptimal import GeneralizationKAnonymityTimeOptimal
+from utility.GeneralizationRange import GeneralizationRange
 
-class TestSuppressionKAnonimityTimeOptimal(unittest.TestCase):
+class TestSuppressionKAnonymityTimeOptimal(unittest.TestCase):
 
     def test_initially_k_anonymus(self):
         df = [
@@ -40,12 +41,7 @@ class TestSuppressionKAnonimityTimeOptimal(unittest.TestCase):
         ]
         k = 4
         k_anonymus_df, k_suppressions = GeneralizationKAnonymityTimeOptimal(k).depersonalize(df)
-        none_df = [
-            ['[1, 4]', '[1, 4]', '[1, 4]', '[1, 4]'],
-            ['[1, 4]', '[1, 4]', '[1, 4]', '[1, 4]'],
-            ['[1, 4]', '[1, 4]', '[1, 4]', '[1, 4]'],
-            ['[1, 4]', '[1, 4]', '[1, 4]', '[1, 4]'],
-        ]
+        none_df = [[GeneralizationRange(1, 4)] * 4]*4
         self.assertEqual(k_anonymus_df, none_df)
         self.assertEqual(k_suppressions, 16)
 

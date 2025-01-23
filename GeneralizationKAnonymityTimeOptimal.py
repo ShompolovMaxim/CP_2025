@@ -1,6 +1,9 @@
 from Depersonalizator import Depersonalizator
 import numpy as np
 from utility.diatances import dfs_rank_distances
+from utility.groupping import group_by_dist
+from utility.GeneralizationRange import GeneralizationRange
+
 
 class GeneralizationKAnonymityTimeOptimal(Depersonalizator):
     def __init__(self, k):
@@ -14,31 +17,11 @@ class GeneralizationKAnonymityTimeOptimal(Depersonalizator):
         if len(df) < self.k:
             return None, None
 
-        grouped = [False] * len(df)
-        groups = []
         my_dist = dfs_rank_distances(df)
+        groups = group_by_dist(my_dist, self.k)
 
-        i = 0
-        while i < len(df):
-            if grouped[i]:
-                i += 1
-                continue
-            dists = [(my_dist[i][j], j) for j in range(len(df))]
-            dists.sort()
-            group = []
-            j = 0
-            while len(group) < self.k and j < len(df):
-                if not grouped[dists[j][1]]:
-                    group.append(dists[j][1])
-                    grouped[dists[j][1]] = True
-                j += 1
-            if len(group) < self.k:
-                groups[-1] = groups[-1] + group
-            else:
-                groups.append(group)
-
-        n_suppressions = 0
-        suppressed_df = np.zeros(df.shape, dtype=object)
+        n_generalizations = 0
+        generalized_df = np.zeros(df.shape, dtype=object)
         for group in groups:
             mask = df[group[0]] == df[group[0]]
             mn = df[group[0]].copy()
@@ -47,12 +30,12 @@ class GeneralizationKAnonymityTimeOptimal(Depersonalizator):
                 mask = mask & (df[group[0]] == df[group[i]])
                 mn = np.minimum(mn, df[group[i]])
                 mx = np.maximum(mx, df[group[i]])
-            rng = np.array(list(map(lambda x: "[" + str(x[0]) + ", " + str(x[1]) + "]", zip(mn, mx))))
+            rng = np.array(list(map(lambda x: GeneralizationRange(x[0], x[1]), zip(mn, mx))))
             mask = ~mask
             for i in group:
                 row = df[i].copy()
                 row[mask] = rng[mask]
-                n_suppressions += mask.sum()
-                suppressed_df[i] = row
+                n_generalizations += mask.sum()
+                generalized_df[i] = row
 
-        return suppressed_df, n_suppressions
+        return generalized_df, n_generalizations

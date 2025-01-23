@@ -6,7 +6,7 @@ import unittest
 import numpy as np
 from SuppressionKAnonimityTimeOptimal import SuppressionKAnonymityTimeOptimal
 
-class TestSuppressionKAnonimityTimeOptimal(unittest.TestCase):
+class TestSuppressionKAnonymityTimeOptimal(unittest.TestCase):
 
     def test_initially_k_anonymus(self):
         df = [

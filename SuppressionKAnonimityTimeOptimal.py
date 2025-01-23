@@ -1,6 +1,7 @@
 from Depersonalizator import Depersonalizator
 import numpy as np
 from utility.diatances import dfs_hamming_distances
+from utility.groupping import group_by_dist
 
 class SuppressionKAnonymityTimeOptimal(Depersonalizator):
     def __init__(self, k):
@@ -14,28 +15,8 @@ class SuppressionKAnonymityTimeOptimal(Depersonalizator):
         if len(df) < self.k:
             return None, None
 
-        grouped = [False] * len(df)
-        groups = []
         hamming = dfs_hamming_distances(df)
-
-        i = 0
-        while i < len(df):
-            if grouped[i]:
-                i += 1
-                continue
-            dists = [(hamming[i][j], j) for j in range(len(df))]
-            dists.sort()
-            group = []
-            j = 0
-            while len(group) < self.k and j < len(df):
-                if not grouped[dists[j][1]]:
-                    group.append(dists[j][1])
-                    grouped[dists[j][1]] = True
-                j += 1
-            if len(group) < self.k:
-                groups[-1] = groups[-1] + group
-            else:
-                groups.append(group)
+        groups = group_by_dist(hamming, self.k)
 
         n_suppressions = 0
         suppressed_df = np.zeros(df.shape, dtype=object)

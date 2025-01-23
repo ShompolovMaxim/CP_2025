@@ -14,27 +14,25 @@ def dfs_rank_distances(df):
     for i in range(len(df[0])):
         sorted_columns.append(sorted(df[:, i].tolist()))
 
-    rngs = []
+    ranks = []
     for i in range(len(df[0])):
         rng = dict()
         for j in range(len(sorted_columns[i])):
             if sorted_columns[i][j] not in rng:
                 rng[sorted_columns[i][j]] = j
-        rngs.append(rng)
+        ranks.append(rng)
 
-    df_rngs = np.zeros((len(df), len(df[0])))
+    df_ranks = np.zeros((len(df), len(df[0])))
     for i in range(len(df)):
         for j in range(len(df[0])):
-            df_rngs[i][j] = rngs[j][df[i][j]]
+            df_ranks[i][j] = ranks[j][df[i][j]]
 
-    grouped = [False] * len(df)
-    groups = []
     my_dist = np.zeros((len(df), len(df)))
     for i in range(len(df)):
         if i % 100 == 0:
             print(i)
         for j in range(i + 1, len(df)):
-            dist = np.abs(df_rngs[i] - df_rngs[j]).sum()
+            dist = np.abs(df_ranks[i] - df_ranks[j]).sum()
             my_dist[i][j] = dist
             my_dist[j][i] = dist
 

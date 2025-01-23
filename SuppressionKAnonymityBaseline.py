@@ -1,6 +1,6 @@
 from Depersonalizator import Depersonalizator
 import copy
-from utility.k_anonymity import is_k_anonimus
+from utility.metrics import is_k_anonimus
 
 class SuppressionKAnonymityBaseline(Depersonalizator):
     def __init__(self, k):
