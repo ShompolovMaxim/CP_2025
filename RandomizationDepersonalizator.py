@@ -22,15 +22,15 @@ class RandomizationBaselineDepersonalizator(Depersonalizator):
                 self.rand_add[i] = lambda x: x + random.choice(
                     [self.min_rand + j * (self.max_rand - self.min_rand) / (self.n_rand - 1) for j in range(self.n_rand)])
 
-    def __depersonalize__(self, df):
-        if len(df) == 0:
-            return df, 0
+    def __depersonalize__(self, identifiers, quasi_identifiers, sensitives):
+        if len(quasi_identifiers) == 0:
+            return None, quasi_identifiers
 
         if self.seed is not None:
             random.seed(self.seed)
 
-        for i in range(len(df)):
-            for j in range(len(df[0])):
-                df[i][j] = self.rand_add[j](df[i][j])
+        for i in range(len(quasi_identifiers)):
+            for j in range(len(quasi_identifiers[0])):
+                quasi_identifiers[i][j] = self.rand_add[j](quasi_identifiers[i][j])
 
-        return df
+        return None, quasi_identifiers

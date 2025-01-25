@@ -25,11 +25,11 @@ def is_l_diverse(quasi_identifiers, sensitives, k, l):
     for identifiers, sensitive in zip(quasi_identifiers, sensitives):
         if tuple(identifiers.tolist()) in counts:
             counts[tuple(identifiers.tolist())] += 1
-            sensitive_values[tuple(identifiers.tolist())].add(sensitive)
+            sensitive_values[tuple(identifiers.tolist())].add(tuple(sensitive))
         else:
             counts[tuple(identifiers.tolist())] = 1
             sensitive_values[tuple(identifiers.tolist())] = set()
-            sensitive_values[tuple(identifiers.tolist())].add(sensitive)
+            sensitive_values[tuple(identifiers.tolist())].add(tuple(sensitive))
     for key in counts.keys():
         if counts[key] < k:
             return False

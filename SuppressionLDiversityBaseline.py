@@ -1,15 +1,16 @@
 from Depersonalizator import Depersonalizator
 import copy
-from utility.metrics import is_k_anonimus
+from utility.metrics import is_l_diverse
 
-class SuppressionKAnonymityBaseline(Depersonalizator):
-    def __init__(self, k):
+class SuppressionLDiversityBaseline(Depersonalizator):
+    def __init__(self, k, l):
         super().__init__([0])
         self.k = k
+        self.l = l
 
     def __depersonalize__(self, identifiers, quasi_identifiers, sensitives, row=0, col=0, k_suppressed=0):
         if col == 0 and row == len(quasi_identifiers):
-            if is_k_anonimus(quasi_identifiers, self.k):
+            if is_l_diverse(quasi_identifiers, sensitives, self.k, self.l):
                 return None, copy.deepcopy(quasi_identifiers), k_suppressed
             else:
                 return None, None, None
@@ -41,5 +42,3 @@ class SuppressionKAnonymityBaseline(Depersonalizator):
             return None, best_df_with_suppression, min_suppressed_with_suppression
         else:
             return None, best_df_without_suppression, min_suppressed_without_suppression
-
-

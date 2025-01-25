@@ -8,27 +8,27 @@ class SuppressionKAnonymityTimeOptimal(Depersonalizator):
         super().__init__([0])
         self.k = k
 
-    def __depersonalize__(self, df):
-        if len(df) == 0:
-            return df, 0
+    def __depersonalize__(self, identifiers, quasi_identifiers, sensitives):
+        if len(quasi_identifiers) == 0:
+            return None, quasi_identifiers, 0
 
-        if len(df) < self.k:
-            return None, None
+        if len(quasi_identifiers) < self.k:
+            return None, None, None
 
-        hamming = dfs_hamming_distances(df)
+        hamming = dfs_hamming_distances(quasi_identifiers)
         groups = group_by_dist(hamming, self.k)
 
         n_suppressions = 0
-        suppressed_df = np.zeros(df.shape, dtype=object)
+        suppressed_df = np.zeros(quasi_identifiers.shape, dtype=object)
         for group in groups:
-            mask = df[group[0]] == df[group[0]]
+            mask = quasi_identifiers[group[0]] == quasi_identifiers[group[0]]
             for i in range(1, len(group)):
-                mask = mask & (df[group[0]] == df[group[i]])
+                mask = mask & (quasi_identifiers[group[0]] == quasi_identifiers[group[i]])
             mask = ~mask
             for i in group:
-                row = df[i].copy()
+                row = quasi_identifiers[i].copy()
                 row[mask] = None
                 n_suppressions += mask.sum()
                 suppressed_df[i] = row
 
-        return suppressed_df, n_suppressions
+        return None, suppressed_df, n_suppressions
