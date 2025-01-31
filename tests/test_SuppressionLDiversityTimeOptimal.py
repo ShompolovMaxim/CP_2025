@@ -4,9 +4,9 @@ sys.path.append('../')
 
 import unittest
 import numpy as np
-from SuppressionLDiversityBaseline import SuppressionLDiversityBaseline
+from SuppressionLDiversityTimeOptimal import SuppressionLDiversityTimeOptimal
 
-class TestSuppressionLDiversityBaseline(unittest.TestCase):
+class TestSuppressionLDiversityTimeOptimal(unittest.TestCase):
 
     def test_initially_l_diverse(self):
         df = [
@@ -17,7 +17,7 @@ class TestSuppressionLDiversityBaseline(unittest.TestCase):
         ]
         k = 2
         l = 2
-        k_anonymus_df, k_suppressions = SuppressionLDiversityBaseline(k, l).depersonalize(df, sensitives_ids=[4])
+        k_anonymus_df, k_suppressions = SuppressionLDiversityTimeOptimal(k, l).depersonalize(df, sensitives_ids=[4])
         self.assertEqual(df, k_anonymus_df)
         self.assertEqual(k_suppressions, 0)
 
@@ -30,7 +30,7 @@ class TestSuppressionLDiversityBaseline(unittest.TestCase):
         ]
         k = 2
         l = 2
-        k_anonymus_df, k_suppressions = SuppressionLDiversityBaseline(k, l).depersonalize(df, sensitives_ids=[4])
+        k_anonymus_df, k_suppressions = SuppressionLDiversityTimeOptimal(k, l).depersonalize(df, sensitives_ids=[4])
         self.assertEqual(k_suppressions, 2)
 
     def test_suppress_everything(self):
@@ -42,7 +42,7 @@ class TestSuppressionLDiversityBaseline(unittest.TestCase):
         ]
         k = 2
         l = 2
-        k_anonymus_df, k_suppressions = SuppressionLDiversityBaseline(k, l).depersonalize(df, sensitives_ids=[4])
+        k_anonymus_df, k_suppressions = SuppressionLDiversityTimeOptimal(k, l).depersonalize(df, sensitives_ids=[4])
         none_df = [
             [None, None, None, None, 1],
             [None, None, None, None, 2],
@@ -61,7 +61,7 @@ class TestSuppressionLDiversityBaseline(unittest.TestCase):
         ]
         k = 5
         l = 2
-        k_anonymus_df, k_suppressions = SuppressionLDiversityBaseline(k, l).depersonalize(df, sensitives_ids=[4])
+        k_anonymus_df, k_suppressions = SuppressionLDiversityTimeOptimal(k, l).depersonalize(df, sensitives_ids=[4])
         self.assertEqual(k_anonymus_df, [[1], [2], [2], [1]])
         self.assertEqual(k_suppressions, None)
 
@@ -74,7 +74,7 @@ class TestSuppressionLDiversityBaseline(unittest.TestCase):
         ]
         k = 1
         l = 1
-        k_anonymus_df, k_suppressions = SuppressionLDiversityBaseline(k, l).depersonalize(df, sensitives_ids=[4])
+        k_anonymus_df, k_suppressions = SuppressionLDiversityTimeOptimal(k, l).depersonalize(df, sensitives_ids=[4])
         self.assertEqual(k_anonymus_df, df)
         self.assertEqual(k_suppressions, 0)
 
@@ -88,7 +88,7 @@ class TestSuppressionLDiversityBaseline(unittest.TestCase):
         df = np.array(df)
         k = 2
         l = 2
-        k_anonymus_df, k_suppressions = SuppressionLDiversityBaseline(k, l).depersonalize(df, sensitives_ids=[4])
+        k_anonymus_df, k_suppressions = SuppressionLDiversityTimeOptimal(k, l).depersonalize(df, sensitives_ids=[4])
         self.assertTrue((df == k_anonymus_df).all())
         self.assertEqual(k_suppressions, 0)
 
@@ -101,7 +101,7 @@ class TestSuppressionLDiversityBaseline(unittest.TestCase):
         ]
         k = 2
         l = 2
-        k_anonymus_df, k_suppressions = SuppressionLDiversityBaseline(k, l).depersonalize(df, sensitives_ids=[4])
+        k_anonymus_df, k_suppressions = SuppressionLDiversityTimeOptimal(k, l).depersonalize(df, sensitives_ids=[4])
         self.assertEqual(df, k_anonymus_df)
         self.assertEqual(k_suppressions, 0)
 
@@ -114,7 +114,7 @@ class TestSuppressionLDiversityBaseline(unittest.TestCase):
         ]
         k = 2
         l = 2
-        k_anonymus_df, k_suppressions = SuppressionLDiversityBaseline(k, l).depersonalize(df, sensitives_ids=[4])
+        k_anonymus_df, k_suppressions = SuppressionLDiversityTimeOptimal(k, l).depersonalize(df, sensitives_ids=[4])
         self.assertEqual(df, k_anonymus_df)
         self.assertEqual(k_suppressions, 0)
 
@@ -127,7 +127,7 @@ class TestSuppressionLDiversityBaseline(unittest.TestCase):
         ]
         k = 2
         l = 2
-        k_anonymus_df, k_suppressions = SuppressionLDiversityBaseline(k, l).depersonalize(df, sensitives_ids=[4])
+        k_anonymus_df, k_suppressions = SuppressionLDiversityTimeOptimal(k, l).depersonalize(df, sensitives_ids=[4])
         self.assertEqual(df, k_anonymus_df)
         self.assertEqual(k_suppressions, 0)
 
