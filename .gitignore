@@ -9,3 +9,5 @@ tests/__pycache__/test_with_datasets.cpython-312-pytest-7.4.4.pyc
 tests/__pycache__/test_SuppressionKAnonymityBaseline.cpython-312-pytest-7.4.4.pyc
 utility/__pycache__/diatances.cpython-312.pyc
 *.pyc
+/utility/__pycache__
+/tests/__pycache__
