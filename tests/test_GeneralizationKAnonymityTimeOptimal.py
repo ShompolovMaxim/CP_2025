@@ -17,7 +17,7 @@ class TestGeneralizationKAnonymityTimeOptimal(unittest.TestCase):
             [2, 2, 2, 2],
         ]
         k = 2
-        k_anonymus_df, k_suppressions = GeneralizationKAnonymityTimeOptimal(k).depersonalize(df)
+        k_anonymus_df, k_suppressions = GeneralizationKAnonymityTimeOptimal(k, ['real']*4).depersonalize(df)
         self.assertEqual(df, k_anonymus_df)
         self.assertEqual(k_suppressions, 0)
 
@@ -29,7 +29,7 @@ class TestGeneralizationKAnonymityTimeOptimal(unittest.TestCase):
             [2, 2, 2, 3],
         ]
         k = 2
-        k_anonymus_df, k_suppressions = GeneralizationKAnonymityTimeOptimal(k).depersonalize(df)
+        k_anonymus_df, k_suppressions = GeneralizationKAnonymityTimeOptimal(k, ['real']*4).depersonalize(df)
         self.assertEqual(k_suppressions, 2)
 
     def test_generalize_everything(self):
@@ -40,8 +40,8 @@ class TestGeneralizationKAnonymityTimeOptimal(unittest.TestCase):
             [4, 4, 4, 4],
         ]
         k = 4
-        k_anonymus_df, k_suppressions = GeneralizationKAnonymityTimeOptimal(k).depersonalize(df)
-        none_df = [[GeneralizationRange(1, 4)] * 4]*4
+        k_anonymus_df, k_suppressions = GeneralizationKAnonymityTimeOptimal(k, ['real']*4).depersonalize(df)
+        none_df = [[GeneralizationRange(1, 4, 'real', None)] * 4]*4
         self.assertEqual(k_anonymus_df, none_df)
         self.assertEqual(k_suppressions, 16)
 
@@ -53,7 +53,7 @@ class TestGeneralizationKAnonymityTimeOptimal(unittest.TestCase):
             [1, 1, 1, 1],
         ]
         k = 5
-        k_anonymus_df, k_suppressions = GeneralizationKAnonymityTimeOptimal(k).depersonalize(df)
+        k_anonymus_df, k_suppressions = GeneralizationKAnonymityTimeOptimal(k, ['real']*4).depersonalize(df)
         self.assertEqual(k_anonymus_df, None)
         self.assertEqual(k_suppressions, None)
 
@@ -65,7 +65,7 @@ class TestGeneralizationKAnonymityTimeOptimal(unittest.TestCase):
             [4, 4, 4, 4],
         ]
         k = 1
-        k_anonymus_df, k_suppressions = GeneralizationKAnonymityTimeOptimal(k).depersonalize(df)
+        k_anonymus_df, k_suppressions = GeneralizationKAnonymityTimeOptimal(k, ['real']*4).depersonalize(df)
         self.assertEqual(k_anonymus_df, df)
         self.assertEqual(k_suppressions, 0)
 
@@ -78,7 +78,7 @@ class TestGeneralizationKAnonymityTimeOptimal(unittest.TestCase):
         ]
         df = np.array(df)
         k = 2
-        k_anonymus_df, k_suppressions = GeneralizationKAnonymityTimeOptimal(k).depersonalize(df)
+        k_anonymus_df, k_suppressions = GeneralizationKAnonymityTimeOptimal(k, ['real']*4).depersonalize(df)
         self.assertTrue((df == k_anonymus_df).all())
         self.assertEqual(k_suppressions, 0)
 
@@ -90,7 +90,7 @@ class TestGeneralizationKAnonymityTimeOptimal(unittest.TestCase):
             ["b", "b", "b", "b"],
         ]
         k = 2
-        k_anonymus_df, k_suppressions = GeneralizationKAnonymityTimeOptimal(k).depersonalize(df)
+        k_anonymus_df, k_suppressions = GeneralizationKAnonymityTimeOptimal(k, ['ordered']*4).depersonalize(df)
         self.assertEqual(df, k_anonymus_df)
         self.assertEqual(k_suppressions, 0)
 
@@ -102,7 +102,7 @@ class TestGeneralizationKAnonymityTimeOptimal(unittest.TestCase):
             [2.0, 2.0, 2.0, 2.0],
         ]
         k = 2
-        k_anonymus_df, k_suppressions = GeneralizationKAnonymityTimeOptimal(k).depersonalize(df)
+        k_anonymus_df, k_suppressions = GeneralizationKAnonymityTimeOptimal(k, ['real']*4).depersonalize(df)
         self.assertEqual(df, k_anonymus_df)
         self.assertEqual(k_suppressions, 0)
 
@@ -114,7 +114,7 @@ class TestGeneralizationKAnonymityTimeOptimal(unittest.TestCase):
             [2.0, 2.0, "b", 2],
         ]
         k = 2
-        k_anonymus_df, k_suppressions = GeneralizationKAnonymityTimeOptimal(k).depersonalize(df)
+        k_anonymus_df, k_suppressions = GeneralizationKAnonymityTimeOptimal(k, ['real', 'real', 'ordered', 'real']).depersonalize(df)
         self.assertEqual(df, k_anonymus_df)
         self.assertEqual(k_suppressions, 0)
 

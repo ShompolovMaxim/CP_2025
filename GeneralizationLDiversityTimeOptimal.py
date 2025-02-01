@@ -6,10 +6,11 @@ from utility.GeneralizationRange import GeneralizationRange
 
 
 class GeneralizationLDiversityTimeOptimal(Depersonalizator):
-    def __init__(self, k, l):
+    def __init__(self, k, l, quasi_identifiers_types = None):
         super().__init__([0])
         self.k = k
         self.l = l
+        self.quasi_identifiers_types = quasi_identifiers_types
 
     def __depersonalize__(self, identifiers, quasi_identifiers, sensitives):
         if len(quasi_identifiers) == 0:
@@ -17,6 +18,9 @@ class GeneralizationLDiversityTimeOptimal(Depersonalizator):
 
         if len(quasi_identifiers) < self.k:
             return None, None, None
+
+        if self.quasi_identifiers_types is None:
+            self.quasi_identifiers_types = ['unordered'] * len(quasi_identifiers[0])
 
         my_dist = dfs_rank_distances(quasi_identifiers)
         groups = group_by_dist_with_l_diverse(my_dist, sensitives, self.k, self.l)
@@ -31,7 +35,8 @@ class GeneralizationLDiversityTimeOptimal(Depersonalizator):
                 mask = mask & (quasi_identifiers[group[0]] == quasi_identifiers[group[i]])
                 mn = np.minimum(mn, quasi_identifiers[group[i]])
                 mx = np.maximum(mx, quasi_identifiers[group[i]])
-            rng = np.array(list(map(lambda x: GeneralizationRange(x[0], x[1]), zip(mn, mx))))
+            rng = np.array(list(map(lambda x: GeneralizationRange(x[0], x[1], x[2], x[3]),
+                                    zip(mn, mx, self.quasi_identifiers_types, np.transpose(quasi_identifiers[group])))))
             mask = ~mask
             for i in group:
                 row = quasi_identifiers[i].copy()

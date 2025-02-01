@@ -44,7 +44,7 @@ class TestGeneralizationLDiversityTimeOptimal(unittest.TestCase):
         k = 4
         l = 2
         k_anonymus_df, k_suppressions = GeneralizationLDiversityTimeOptimal(k, l).depersonalize(df, sensitives_ids=[4])
-        general_quasi_identifiers = [[GeneralizationRange(1, 4)] * 4 + [1]]*4
+        general_quasi_identifiers = [[GeneralizationRange(1, 4, 'real', None)] * 4 + [1]]*4
         self.assertEqual(k_anonymus_df, general_quasi_identifiers)
         self.assertEqual(k_suppressions, 16)
 
