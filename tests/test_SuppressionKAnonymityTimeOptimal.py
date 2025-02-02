@@ -4,7 +4,7 @@ sys.path.append('../')
 
 import unittest
 import numpy as np
-from SuppressionKAnonimityTimeOptimal import SuppressionKAnonymityTimeOptimal
+from SuppressionKAnonymityTimeOptimal import SuppressionKAnonymityTimeOptimal
 
 class TestSuppressionKAnonymityTimeOptimal(unittest.TestCase):
 

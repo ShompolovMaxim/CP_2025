@@ -4,7 +4,7 @@ sys.path.append('../')
 
 from numpy import genfromtxt
 import numpy as np
-from SuppressionKAnonimityTimeOptimal import SuppressionKAnonymityTimeOptimal
+from SuppressionKAnonymityTimeOptimal import SuppressionKAnonymityTimeOptimal
 from Datafly import Datafly
 from AggregationGreedyByOneEqualSizedGroups import AggregationGreedyByOneEqualSizedGroups
 
