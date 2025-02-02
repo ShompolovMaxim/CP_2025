@@ -18,7 +18,7 @@ class TestGeneralizationLDiversityTimeOptimal(unittest.TestCase):
         ]
         k = 2
         l = 2
-        k_anonymus_df, k_suppressions = GeneralizationLDiversityTimeOptimal(k, l).depersonalize(df, sensitives_ids=[4])
+        k_anonymus_df, k_suppressions = GeneralizationLDiversityTimeOptimal(k, l, ['real']*4).depersonalize(df, sensitives_ids=[4])
         self.assertEqual(df, k_anonymus_df)
         self.assertEqual(k_suppressions, 0)
 
@@ -31,7 +31,7 @@ class TestGeneralizationLDiversityTimeOptimal(unittest.TestCase):
         ]
         k = 2
         l = 2
-        k_anonymus_df, k_suppressions = GeneralizationLDiversityTimeOptimal(k, l).depersonalize(df, sensitives_ids=[4])
+        k_anonymus_df, k_suppressions = GeneralizationLDiversityTimeOptimal(k, l, ['real']*4).depersonalize(df, sensitives_ids=[4])
         self.assertEqual(k_suppressions, 2)
 
     def test_generalize_everything(self):
@@ -43,7 +43,7 @@ class TestGeneralizationLDiversityTimeOptimal(unittest.TestCase):
         ]
         k = 4
         l = 2
-        k_anonymus_df, k_suppressions = GeneralizationLDiversityTimeOptimal(k, l).depersonalize(df, sensitives_ids=[4])
+        k_anonymus_df, k_suppressions = GeneralizationLDiversityTimeOptimal(k, l, ['real']*4).depersonalize(df, sensitives_ids=[4])
         general_quasi_identifiers = [[GeneralizationRange(1, 4, 'real', None)] * 4 + [1]]*4
         self.assertEqual(k_anonymus_df, general_quasi_identifiers)
         self.assertEqual(k_suppressions, 16)
@@ -57,7 +57,7 @@ class TestGeneralizationLDiversityTimeOptimal(unittest.TestCase):
         ]
         k = 5
         l = 2
-        k_anonymus_df, k_suppressions = GeneralizationLDiversityTimeOptimal(k, l).depersonalize(df, sensitives_ids=[4])
+        k_anonymus_df, k_suppressions = GeneralizationLDiversityTimeOptimal(k, l, ['real']*4).depersonalize(df, sensitives_ids=[4])
         self.assertEqual(k_anonymus_df, [[1], [2], [2], [1]])
         self.assertEqual(k_suppressions, None)
 
@@ -70,7 +70,7 @@ class TestGeneralizationLDiversityTimeOptimal(unittest.TestCase):
         ]
         k = 1
         l = 1
-        k_anonymus_df, k_suppressions = GeneralizationLDiversityTimeOptimal(k, l).depersonalize(df, sensitives_ids=[4])
+        k_anonymus_df, k_suppressions = GeneralizationLDiversityTimeOptimal(k, l, ['real']*4).depersonalize(df, sensitives_ids=[4])
         self.assertEqual(k_anonymus_df, df)
         self.assertEqual(k_suppressions, 0)
 
@@ -84,7 +84,7 @@ class TestGeneralizationLDiversityTimeOptimal(unittest.TestCase):
         df = np.array(df)
         k = 2
         l = 2
-        k_anonymus_df, k_suppressions = GeneralizationLDiversityTimeOptimal(k, l).depersonalize(df, sensitives_ids=[4])
+        k_anonymus_df, k_suppressions = GeneralizationLDiversityTimeOptimal(k, l, ['real']*4).depersonalize(df, sensitives_ids=[4])
         self.assertTrue((df == k_anonymus_df).all())
         self.assertEqual(k_suppressions, 0)
 
@@ -97,7 +97,7 @@ class TestGeneralizationLDiversityTimeOptimal(unittest.TestCase):
         ]
         k = 2
         l = 2
-        k_anonymus_df, k_suppressions = GeneralizationLDiversityTimeOptimal(k, l).depersonalize(df, sensitives_ids=[4])
+        k_anonymus_df, k_suppressions = GeneralizationLDiversityTimeOptimal(k, l, ['ordered']*4).depersonalize(df, sensitives_ids=[4])
         self.assertEqual(df, k_anonymus_df)
         self.assertEqual(k_suppressions, 0)
 
@@ -110,7 +110,7 @@ class TestGeneralizationLDiversityTimeOptimal(unittest.TestCase):
         ]
         k = 2
         l = 2
-        k_anonymus_df, k_suppressions = GeneralizationLDiversityTimeOptimal(k, l).depersonalize(df, sensitives_ids=[4])
+        k_anonymus_df, k_suppressions = GeneralizationLDiversityTimeOptimal(k, l, ['real']*4).depersonalize(df, sensitives_ids=[4])
         self.assertEqual(df, k_anonymus_df)
         self.assertEqual(k_suppressions, 0)
 
@@ -123,7 +123,7 @@ class TestGeneralizationLDiversityTimeOptimal(unittest.TestCase):
         ]
         k = 2
         l = 2
-        k_anonymus_df, k_suppressions = GeneralizationLDiversityTimeOptimal(k, l).depersonalize(df, sensitives_ids=[4])
+        k_anonymus_df, k_suppressions = GeneralizationLDiversityTimeOptimal(k, l, ['real', 'real', 'ordered', 'real']).depersonalize(df, sensitives_ids=[4])
         self.assertEqual(df, k_anonymus_df)
         self.assertEqual(k_suppressions, 0)
 

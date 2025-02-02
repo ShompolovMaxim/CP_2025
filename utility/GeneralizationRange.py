@@ -1,6 +1,8 @@
 import numpy as np
 
 def join_unordered(lhs, rhs):
+    if lhs == rhs:
+        return lhs
     if isinstance(lhs, GeneralizationRange):
         arr1 = lhs.values_set
     else:
@@ -12,6 +14,8 @@ def join_unordered(lhs, rhs):
     return GeneralizationRange(None, None, 'unordered', np.concatenate((arr1, arr2)))
 
 def join_ordered(lhs, rhs, column_type):
+    if lhs == rhs:
+        return lhs
     if isinstance(lhs, GeneralizationRange):
         min1 = lhs.min
         max1 = lhs.max
