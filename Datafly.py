@@ -11,7 +11,7 @@ class Datafly(Depersonalizator):
         if k_suppressed_lines is not None:
             self.k_suppressed_lines = k_suppressed_lines
         else:
-            self.k_suppressed_lines = k
+            self.k_suppressed_lines = k-1
 
     def __depersonalize__(self, identifiers, quasi_identifiers, sensitives):
         if len(quasi_identifiers) == 0:
@@ -58,7 +58,7 @@ class Datafly(Depersonalizator):
         for line in k_lines.keys():
             if len(k_lines[line]) < self.k:
                 k_not_grouped += len(k_lines[line])
-        return k_not_grouped < self.k_suppressed_lines
+        return k_not_grouped <= self.k_suppressed_lines
 
     def __generalize_column__(self, column, column_type):
         values, count = np.unique(column, return_counts=True)
