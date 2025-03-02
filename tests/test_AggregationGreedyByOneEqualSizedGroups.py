@@ -138,7 +138,10 @@ class TestAggregationGreedyByOneEqualSizedGroups(unittest.TestCase):
             cols = random.randint(1, 5)
             df = np.random.randint(0, 3, (rows, cols))
             k = random.randint(2, 4)
-            k_anonymus_df, group_size = AggregationGreedyByOneEqualSizedGroups(k, ['real']*cols).depersonalize(df)
+            quasi_identifiers_types = []
+            for j in range(cols):
+                quasi_identifiers_types.append(random.choice(['real', 'ordered', 'unordered']))
+            k_anonymus_df, group_size = AggregationGreedyByOneEqualSizedGroups(k, quasi_identifiers_types).depersonalize(df)
 
 
 if __name__ == '__main__':

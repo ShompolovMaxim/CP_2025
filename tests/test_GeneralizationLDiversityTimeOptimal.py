@@ -139,7 +139,11 @@ class TestGeneralizationLDiversityTimeOptimal(unittest.TestCase):
             k = random.randint(2, 4)
             l = random.randint(2, k)
             k_sens = 1  # random.randint(1, cols-1)
-            k_anonymus_df, k_generalizations = GeneralizationLDiversityTimeOptimal(k, l).depersonalize(df, sensitives_ids=list(range(k_sens)))
+            quasi_identifiers_types = []
+            for j in range(cols):
+                quasi_identifiers_types.append(random.choice(['real', 'ordered', 'unordered']))
+            k_anonymus_df, k_generalizations = (GeneralizationLDiversityTimeOptimal(k, l, quasi_identifiers_types=quasi_identifiers_types)
+                                                .depersonalize(df, sensitives_ids=list(range(k_sens))))
 
 
 

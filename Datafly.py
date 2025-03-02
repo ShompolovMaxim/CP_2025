@@ -24,9 +24,7 @@ class Datafly(Depersonalizator):
             self.quasi_identifiers_types = ['unordered'] * len(quasi_identifiers[0])
 
         quasi_identifiers_initial = np.copy(quasi_identifiers)
-        ind = 0
         while not self.__has_less_k_suppressed_not_grouped__(quasi_identifiers):
-            ind+=1
             column_with_max_distinct = 0
             max_k_distinct = 0
             for i in range(len(quasi_identifiers[0])):
@@ -76,8 +74,8 @@ class Datafly(Depersonalizator):
             count = np.array(count)
             count_sorted = np.sort(count)
             min_count_value = values[np.where(count == count_sorted[0])[0][0]]
-
-            second_min_count_value = values[np.where(count == count_sorted[1])[0][0]]
+            second_min_count_value = values[np.where(count == count_sorted[1])[0][0]] if count_sorted[0] != count_sorted[1] \
+                else values[np.where(count == count_sorted[1])[0][1]]
             generalized_value = join_unordered(min_count_value, second_min_count_value)
             column[column == min_count_value] = generalized_value
             column[column == second_min_count_value] = generalized_value

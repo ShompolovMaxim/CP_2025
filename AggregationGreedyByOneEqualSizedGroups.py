@@ -40,7 +40,7 @@ class AggregationGreedyByOneEqualSizedGroups(Depersonalizator):
         group_mins = []
         group_maxs = []
         if column_type == 'unordered':
-            values = list(set(column.tolist()))
+            values = np.array(list(set(column.tolist())))
             i=0
             group_values = []
             pred_i = 0

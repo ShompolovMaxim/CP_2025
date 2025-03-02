@@ -139,7 +139,10 @@ class TestDatafly(unittest.TestCase):
             cols = random.randint(1, 5)
             df = np.random.randint(0, 3, (rows, cols))
             k = random.randint(2, 4)
-            k_anonymus_df, k_changes = Datafly(k, ['real']*cols).depersonalize(df)
+            quasi_identifiers_types = []
+            for j in range(cols):
+                quasi_identifiers_types.append(random.choice(['real', 'ordered', 'unordered']))
+            k_anonymus_df, k_changes = Datafly(k, quasi_identifiers_types).depersonalize(df)
 
 
 
