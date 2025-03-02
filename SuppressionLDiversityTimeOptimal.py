@@ -18,6 +18,8 @@ class SuppressionLDiversityTimeOptimal(Depersonalizator):
 
         hamming = dfs_hamming_distances(quasi_identifiers)
         groups = group_by_dist_with_l_diverse(hamming, sensitives, self.k, self.l)
+        if groups is None:
+            return None, None, None
 
         n_suppressions = 0
         suppressed_df = np.zeros(quasi_identifiers.shape, dtype=object)

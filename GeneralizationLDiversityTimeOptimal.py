@@ -24,6 +24,8 @@ class GeneralizationLDiversityTimeOptimal(Depersonalizator):
 
         my_dist = dfs_rank_distances(quasi_identifiers)
         groups = group_by_dist_with_l_diverse(my_dist, sensitives, self.k, self.l)
+        if groups is None:
+            return None, None, None
 
         n_generalizations = 0
         generalized_df = np.zeros(quasi_identifiers.shape, dtype=object)

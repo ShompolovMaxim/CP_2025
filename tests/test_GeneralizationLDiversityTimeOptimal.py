@@ -19,8 +19,8 @@ class TestGeneralizationLDiversityTimeOptimal(unittest.TestCase):
         ]
         k = 2
         l = 2
-        k_anonymus_df, k_generalizations = GeneralizationLDiversityTimeOptimal(k, l, ['real']*4).depersonalize(df, sensitives_ids=[4])
-        self.assertEqual(df, k_anonymus_df)
+        l_diverse_df, k_generalizations = GeneralizationLDiversityTimeOptimal(k, l, ['real']*4).depersonalize(df, sensitives_ids=[4])
+        self.assertEqual(df, l_diverse_df)
         self.assertEqual(k_generalizations, 0)
 
     def test_generalize_last_element(self):
@@ -32,7 +32,7 @@ class TestGeneralizationLDiversityTimeOptimal(unittest.TestCase):
         ]
         k = 2
         l = 2
-        k_anonymus_df, k_generalizations = GeneralizationLDiversityTimeOptimal(k, l, ['real']*4).depersonalize(df, sensitives_ids=[4])
+        l_diverse_df, k_generalizations = GeneralizationLDiversityTimeOptimal(k, l, ['real']*4).depersonalize(df, sensitives_ids=[4])
         self.assertEqual(k_generalizations, 2)
 
     def test_generalize_everything(self):
@@ -40,13 +40,14 @@ class TestGeneralizationLDiversityTimeOptimal(unittest.TestCase):
             [1, 1, 1, 1, 1],
             [2, 2, 2, 2, 1],
             [3, 3, 3, 3, 1],
-            [4, 4, 4, 4, 1],
+            [4, 4, 4, 4, 2],
         ]
         k = 4
         l = 2
-        k_anonymus_df, k_generalizations = GeneralizationLDiversityTimeOptimal(k, l, ['real']*4).depersonalize(df, sensitives_ids=[4])
-        general_quasi_identifiers = [[GeneralizationRange(1, 4, 'real', None)] * 4 + [1]]*4
-        self.assertEqual(k_anonymus_df, general_quasi_identifiers)
+        l_diverse_df, k_generalizations = GeneralizationLDiversityTimeOptimal(k, l, ['real']*4).depersonalize(df, sensitives_ids=[4])
+        general_df = [[GeneralizationRange(1, 4, 'real', None)] * 4 + [1] for i in range(4)]
+        general_df[3][4] = 2
+        self.assertEqual(l_diverse_df, general_df)
         self.assertEqual(k_generalizations, 16)
 
     def test_big_k(self):
@@ -58,8 +59,8 @@ class TestGeneralizationLDiversityTimeOptimal(unittest.TestCase):
         ]
         k = 5
         l = 2
-        k_anonymus_df, k_generalizations = GeneralizationLDiversityTimeOptimal(k, l, ['real']*4).depersonalize(df, sensitives_ids=[3])
-        self.assertEqual(k_anonymus_df, [[1], [2], [2], [1]])
+        l_diverse_df, k_generalizations = GeneralizationLDiversityTimeOptimal(k, l, ['real']*4).depersonalize(df, sensitives_ids=[3])
+        self.assertEqual(l_diverse_df, [[1], [2], [2], [1]])
         self.assertEqual(k_generalizations, None)
 
     def test_k_equals_one(self):
@@ -71,8 +72,8 @@ class TestGeneralizationLDiversityTimeOptimal(unittest.TestCase):
         ]
         k = 1
         l = 1
-        k_anonymus_df, k_generalizations = GeneralizationLDiversityTimeOptimal(k, l, ['real']*4).depersonalize(df, sensitives_ids=[4])
-        self.assertEqual(k_anonymus_df, df)
+        l_diverse_df, k_generalizations = GeneralizationLDiversityTimeOptimal(k, l, ['real']*4).depersonalize(df, sensitives_ids=[4])
+        self.assertEqual(l_diverse_df, df)
         self.assertEqual(k_generalizations, 0)
 
     def test_numpy(self):
@@ -85,8 +86,8 @@ class TestGeneralizationLDiversityTimeOptimal(unittest.TestCase):
         df = np.array(df)
         k = 2
         l = 2
-        k_anonymus_df, k_generalizations = GeneralizationLDiversityTimeOptimal(k, l, ['real']*4).depersonalize(df, sensitives_ids=[4])
-        self.assertTrue((df == k_anonymus_df).all())
+        l_diverse_df, k_generalizations = GeneralizationLDiversityTimeOptimal(k, l, ['real']*4).depersonalize(df, sensitives_ids=[4])
+        self.assertTrue((df == l_diverse_df).all())
         self.assertEqual(k_generalizations, 0)
 
     def test_string_data(self):
@@ -98,8 +99,8 @@ class TestGeneralizationLDiversityTimeOptimal(unittest.TestCase):
         ]
         k = 2
         l = 2
-        k_anonymus_df, k_generalizations = GeneralizationLDiversityTimeOptimal(k, l, ['ordered']*4).depersonalize(df, sensitives_ids=[4])
-        self.assertEqual(df, k_anonymus_df)
+        l_diverse_df, k_generalizations = GeneralizationLDiversityTimeOptimal(k, l, ['ordered']*4).depersonalize(df, sensitives_ids=[4])
+        self.assertEqual(df, l_diverse_df)
         self.assertEqual(k_generalizations, 0)
 
     def test_float_data(self):
@@ -111,8 +112,8 @@ class TestGeneralizationLDiversityTimeOptimal(unittest.TestCase):
         ]
         k = 2
         l = 2
-        k_anonymus_df, k_generalizations = GeneralizationLDiversityTimeOptimal(k, l, ['real']*4).depersonalize(df, sensitives_ids=[4])
-        self.assertEqual(df, k_anonymus_df)
+        l_diverse_df, k_generalizations = GeneralizationLDiversityTimeOptimal(k, l, ['real']*4).depersonalize(df, sensitives_ids=[4])
+        self.assertEqual(df, l_diverse_df)
         self.assertEqual(k_generalizations, 0)
 
     def test_mixed_data(self):
@@ -124,8 +125,8 @@ class TestGeneralizationLDiversityTimeOptimal(unittest.TestCase):
         ]
         k = 2
         l = 2
-        k_anonymus_df, k_generalizations = GeneralizationLDiversityTimeOptimal(k, l, ['real', 'real', 'ordered', 'real']).depersonalize(df, sensitives_ids=[4])
-        self.assertEqual(df, k_anonymus_df)
+        l_diverse_df, k_generalizations = GeneralizationLDiversityTimeOptimal(k, l, ['real', 'real', 'ordered', 'real']).depersonalize(df, sensitives_ids=[4])
+        self.assertEqual(df, l_diverse_df)
         self.assertEqual(k_generalizations, 0)
 
     def test_random_df(self):
@@ -138,11 +139,11 @@ class TestGeneralizationLDiversityTimeOptimal(unittest.TestCase):
             df = np.random.randint(0, 3, (rows, cols))
             k = random.randint(2, 4)
             l = random.randint(2, k)
-            k_sens = 1  # random.randint(1, cols-1)
+            k_sens = random.randint(1, cols-1)
             quasi_identifiers_types = []
             for j in range(cols):
                 quasi_identifiers_types.append(random.choice(['real', 'ordered', 'unordered']))
-            k_anonymus_df, k_generalizations = (GeneralizationLDiversityTimeOptimal(k, l, quasi_identifiers_types=quasi_identifiers_types)
+            l_diverse_df, k_generalizations = (GeneralizationLDiversityTimeOptimal(k, l, quasi_identifiers_types=quasi_identifiers_types)
                                                 .depersonalize(df, sensitives_ids=list(range(k_sens))))
 
 

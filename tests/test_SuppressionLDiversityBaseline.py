@@ -17,8 +17,8 @@ class TestSuppressionLDiversityBaseline(unittest.TestCase):
         ]
         k = 2
         l = 2
-        k_anonymus_df, k_suppressions = SuppressionLDiversityBaseline(k, l).depersonalize(df, sensitives_ids=[4])
-        self.assertEqual(df, k_anonymus_df)
+        l_diverse_df, k_suppressions = SuppressionLDiversityBaseline(k, l).depersonalize(df, sensitives_ids=[4])
+        self.assertEqual(df, l_diverse_df)
         self.assertEqual(k_suppressions, 0)
 
     def test_suppress_last_element(self):
@@ -30,7 +30,7 @@ class TestSuppressionLDiversityBaseline(unittest.TestCase):
         ]
         k = 2
         l = 2
-        k_anonymus_df, k_suppressions = SuppressionLDiversityBaseline(k, l).depersonalize(df, sensitives_ids=[4])
+        l_diverse_df, k_suppressions = SuppressionLDiversityBaseline(k, l).depersonalize(df, sensitives_ids=[4])
         self.assertEqual(k_suppressions, 2)
 
     def test_suppress_everything(self):
@@ -42,14 +42,14 @@ class TestSuppressionLDiversityBaseline(unittest.TestCase):
         ]
         k = 2
         l = 2
-        k_anonymus_df, k_suppressions = SuppressionLDiversityBaseline(k, l).depersonalize(df, sensitives_ids=[4])
+        l_diverse_df, k_suppressions = SuppressionLDiversityBaseline(k, l).depersonalize(df, sensitives_ids=[4])
         none_df = [
             [None, None, None, None, 1],
             [None, None, None, None, 2],
             [None, None, None, None, 2],
             [None, None, None, None, 1],
         ]
-        self.assertEqual(k_anonymus_df, none_df)
+        self.assertEqual(l_diverse_df, none_df)
         self.assertEqual(k_suppressions, 16)
 
     def test_big_k(self):
@@ -61,8 +61,8 @@ class TestSuppressionLDiversityBaseline(unittest.TestCase):
         ]
         k = 5
         l = 2
-        k_anonymus_df, k_suppressions = SuppressionLDiversityBaseline(k, l).depersonalize(df, sensitives_ids=[4])
-        self.assertEqual(k_anonymus_df, [[1], [2], [2], [1]])
+        l_diverse_df, k_suppressions = SuppressionLDiversityBaseline(k, l).depersonalize(df, sensitives_ids=[4])
+        self.assertEqual(l_diverse_df, [[1], [2], [2], [1]])
         self.assertEqual(k_suppressions, None)
 
     def test_k_equals_one(self):
@@ -74,8 +74,8 @@ class TestSuppressionLDiversityBaseline(unittest.TestCase):
         ]
         k = 1
         l = 1
-        k_anonymus_df, k_suppressions = SuppressionLDiversityBaseline(k, l).depersonalize(df, sensitives_ids=[4])
-        self.assertEqual(k_anonymus_df, df)
+        l_diverse_df, k_suppressions = SuppressionLDiversityBaseline(k, l).depersonalize(df, sensitives_ids=[4])
+        self.assertEqual(l_diverse_df, df)
         self.assertEqual(k_suppressions, 0)
 
     def test_numpy(self):
@@ -88,8 +88,8 @@ class TestSuppressionLDiversityBaseline(unittest.TestCase):
         df = np.array(df)
         k = 2
         l = 2
-        k_anonymus_df, k_suppressions = SuppressionLDiversityBaseline(k, l).depersonalize(df, sensitives_ids=[4])
-        self.assertTrue((df == k_anonymus_df).all())
+        l_diverse_df, k_suppressions = SuppressionLDiversityBaseline(k, l).depersonalize(df, sensitives_ids=[4])
+        self.assertTrue((df == l_diverse_df).all())
         self.assertEqual(k_suppressions, 0)
 
     def test_string_data(self):
@@ -101,8 +101,8 @@ class TestSuppressionLDiversityBaseline(unittest.TestCase):
         ]
         k = 2
         l = 2
-        k_anonymus_df, k_suppressions = SuppressionLDiversityBaseline(k, l).depersonalize(df, sensitives_ids=[4])
-        self.assertEqual(df, k_anonymus_df)
+        l_diverse_df, k_suppressions = SuppressionLDiversityBaseline(k, l).depersonalize(df, sensitives_ids=[4])
+        self.assertEqual(df, l_diverse_df)
         self.assertEqual(k_suppressions, 0)
 
     def test_float_data(self):
@@ -114,8 +114,8 @@ class TestSuppressionLDiversityBaseline(unittest.TestCase):
         ]
         k = 2
         l = 2
-        k_anonymus_df, k_suppressions = SuppressionLDiversityBaseline(k, l).depersonalize(df, sensitives_ids=[4])
-        self.assertEqual(df, k_anonymus_df)
+        l_diverse_df, k_suppressions = SuppressionLDiversityBaseline(k, l).depersonalize(df, sensitives_ids=[4])
+        self.assertEqual(df, l_diverse_df)
         self.assertEqual(k_suppressions, 0)
 
     def test_mixed_data(self):
@@ -127,8 +127,8 @@ class TestSuppressionLDiversityBaseline(unittest.TestCase):
         ]
         k = 2
         l = 2
-        k_anonymus_df, k_suppressions = SuppressionLDiversityBaseline(k, l).depersonalize(df, sensitives_ids=[4])
-        self.assertEqual(df, k_anonymus_df)
+        l_diverse_df, k_suppressions = SuppressionLDiversityBaseline(k, l).depersonalize(df, sensitives_ids=[4])
+        self.assertEqual(df, l_diverse_df)
         self.assertEqual(k_suppressions, 0)
 
 
