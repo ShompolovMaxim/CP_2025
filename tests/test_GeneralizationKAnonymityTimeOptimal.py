@@ -4,6 +4,7 @@ sys.path.append('../')
 
 import unittest
 import numpy as np
+import random
 from GeneralizationKAnonymityTimeOptimal import GeneralizationKAnonymityTimeOptimal
 from utility.GeneralizationRange import GeneralizationRange
 
@@ -117,6 +118,17 @@ class TestGeneralizationKAnonymityTimeOptimal(unittest.TestCase):
         k_anonymus_df, k_suppressions = GeneralizationKAnonymityTimeOptimal(k, ['real', 'real', 'ordered', 'real']).depersonalize(df)
         self.assertEqual(df, k_anonymus_df)
         self.assertEqual(k_suppressions, 0)
+
+    def test_random_df(self):
+        seed = 1234
+        random.seed(seed)
+        np.random.seed(seed)
+        for i in range(1000):
+            rows = random.randint(4, 50)
+            cols = random.randint(1, 5)
+            df = np.random.randint(0, 3, (rows, cols))
+            k = random.randint(2, 4)
+            k_anonymus_df, k_suppressions = GeneralizationKAnonymityTimeOptimal(k, ['real']*cols).depersonalize(df)
 
 
 

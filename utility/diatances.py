@@ -43,8 +43,8 @@ def dfs_rank_general_dist(df, value_classes):
     for i in range(len(df)):
         for j in range(len(df[0])):
             if value_classes[j] == 'real':
-                df_values_dists[i][j] = 0 if df_maxs[i] == df_mins[i] or df_maxs[i] is None or df_mins[i] is None\
-                    else (df[i][j] - df_mins[i]) / (df_maxs[i] - df_mins[i])
+                df_values_dists[i][j] = 0 if df_maxs[j] == df_mins[j] or df_maxs[j] is None or df_mins[j] is None\
+                    else (df[i][j] - df_mins[j]) / (df_maxs[j] - df_mins[j])
             elif value_classes[j] == 'ordered':
                 df_values_dists[i][j] = ranks[j][df[i][j]] / len(df)
             elif value_classes[j] == 'unordered':

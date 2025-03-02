@@ -5,6 +5,7 @@ sys.path.append('../')
 import unittest
 import numpy as np
 from SuppressionKAnonymityBaseline import SuppressionKAnonymityBaseline
+import random
 
 class TestSuppressionKAnonymityBaseline(unittest.TestCase):
 
@@ -121,8 +122,6 @@ class TestSuppressionKAnonymityBaseline(unittest.TestCase):
         k_anonymus_df, k_suppressions = SuppressionKAnonymityBaseline(k).depersonalize(df)
         self.assertEqual(df, k_anonymus_df)
         self.assertEqual(k_suppressions, 0)
-
-
 
 if __name__ == '__main__':
     unittest.main()

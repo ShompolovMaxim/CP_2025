@@ -4,6 +4,7 @@ sys.path.append('../')
 
 import unittest
 import numpy as np
+import random
 from GeneralizationLDiversityTimeOptimal import GeneralizationLDiversityTimeOptimal
 from utility.GeneralizationRange import GeneralizationRange
 
@@ -51,13 +52,13 @@ class TestGeneralizationLDiversityTimeOptimal(unittest.TestCase):
     def test_big_k(self):
         df = [
             [1, 1, 1, 1, 1],
-            [1, 1, 1, 1, 2],
-            [1, 1, 1, 1, 2],
+            [1, 1, 1, 2, 1],
+            [1, 1, 1, 2, 1],
             [1, 1, 1, 1, 1],
         ]
         k = 5
         l = 2
-        k_anonymus_df, k_suppressions = GeneralizationLDiversityTimeOptimal(k, l, ['real']*4).depersonalize(df, sensitives_ids=[4])
+        k_anonymus_df, k_suppressions = GeneralizationLDiversityTimeOptimal(k, l, ['real']*4).depersonalize(df, sensitives_ids=[3])
         self.assertEqual(k_anonymus_df, [[1], [2], [2], [1]])
         self.assertEqual(k_suppressions, None)
 
@@ -126,6 +127,19 @@ class TestGeneralizationLDiversityTimeOptimal(unittest.TestCase):
         k_anonymus_df, k_suppressions = GeneralizationLDiversityTimeOptimal(k, l, ['real', 'real', 'ordered', 'real']).depersonalize(df, sensitives_ids=[4])
         self.assertEqual(df, k_anonymus_df)
         self.assertEqual(k_suppressions, 0)
+
+    def test_random_df(self):
+        seed = 1234
+        random.seed(seed)
+        np.random.seed(seed)
+        for i in range(1000):
+            rows = random.randint(4, 50)
+            cols = random.randint(2, 6)
+            df = np.random.randint(0, 3, (rows, cols))
+            k = random.randint(2, 4)
+            l = random.randint(2, k)
+            k_sens = 1  # random.randint(1, cols-1)
+            k_anonymus_df, k_suppressions = GeneralizationLDiversityTimeOptimal(k, l).depersonalize(df, sensitives_ids=list(range(k_sens)))
 
 
 

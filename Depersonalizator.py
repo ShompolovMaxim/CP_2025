@@ -60,7 +60,23 @@ class Depersonalizator(ABC):
         if len(out_identifiers[0]) == 0 and len(out_quasi_identifiers[0]) == 0 and len(sensitives[0]) == 0:
             return None, *other_output
 
-        output_df = np.column_stack((out_identifiers, out_quasi_identifiers, sensitives))
+        cols = []
+        cur_identifier = 0
+        cur_quasi_identifier = 0
+        cur_sensitive = 0
+        for i in range(len(df[0])):
+            if i in identifiers_ids:
+                if len(out_identifiers[0]) == len(identifiers_ids):
+                    cols.append(out_identifiers[:, cur_identifier])
+                    cur_identifier += 1
+            if i in quasi_identifiers_ids:
+                if len(out_quasi_identifiers[0]) == len(quasi_identifiers_ids):
+                    cols.append(out_quasi_identifiers[:, cur_quasi_identifier])
+                    cur_quasi_identifier += 1
+            if i in sensitives_ids:
+                cols.append(sensitives[:, cur_sensitive])
+                cur_sensitive += 1
+        output_df = np.column_stack(cols)
 
         if df_is_list:
             return output_df.tolist() if out_quasi_identifiers is not None else None, *other_output

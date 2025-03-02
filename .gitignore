@@ -10,3 +10,4 @@ utility/__pycache__/diatances.cpython-312.pyc
 /utility/__pycache__
 /tests/__pycache__
 /utility/__pycache__
+*.pyc
