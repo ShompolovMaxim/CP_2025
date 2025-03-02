@@ -30,7 +30,7 @@ class Datafly(Depersonalizator):
             column_with_max_distinct = 0
             max_k_distinct = 0
             for i in range(len(quasi_identifiers[0])):
-                k_distinct = len(np.unique(quasi_identifiers[:, i]))
+                k_distinct = len(set(quasi_identifiers[:, i].tolist()))
                 if k_distinct > max_k_distinct:
                     max_k_distinct = k_distinct
                     column_with_max_distinct = i
@@ -61,17 +61,33 @@ class Datafly(Depersonalizator):
         return k_not_grouped <= self.k_suppressed_lines
 
     def __generalize_column__(self, column, column_type):
-        values, count = np.unique(column, return_counts=True)
-        values_count = dict(zip(values, count))
-        count_sorted = np.sort(count)
-        min_count_value = values[np.where(count == count_sorted[0])[0][0]]
         if column_type == 'unordered':
+            values = list(set(column.tolist()))
+            values_count = dict()
+            for value in values:
+                if value not in values_count:
+                    values_count[value] = 1
+                else:
+                    values_count[value] += 1
+            count = [0] * len(values)
+            for i in range(len(values)):
+                count[i] = values_count[values[i]]
+            values = np.array(values)
+            count = np.array(count)
+            count_sorted = np.sort(count)
+            min_count_value = values[np.where(count == count_sorted[0])[0][0]]
+
             second_min_count_value = values[np.where(count == count_sorted[1])[0][0]]
             generalized_value = join_unordered(min_count_value, second_min_count_value)
             column[column == min_count_value] = generalized_value
             column[column == second_min_count_value] = generalized_value
             return column
         elif column_type == 'real' or column_type == 'ordered':
+            values, count = np.unique(column, return_counts=True)
+            values_count = dict(zip(values, count))
+            count_sorted = np.sort(count)
+            min_count_value = values[np.where(count == count_sorted[0])[0][0]]
+
             column_sorted = np.sort(np.copy(column))
             less_min_count_value_id = np.where(column_sorted == min_count_value)[0][0]
             more_min_count_value_id = np.where(column_sorted == min_count_value)[0][0]

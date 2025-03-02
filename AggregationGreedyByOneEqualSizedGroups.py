@@ -20,7 +20,7 @@ class AggregationGreedyByOneEqualSizedGroups(Depersonalizator):
         if self.quasi_identifiers_types is None:
             self.quasi_identifiers_types = ['unordered'] * len(quasi_identifiers[0])
 
-        group_size = self.k-1
+        group_size = max(self.k-1, 1)
         aggregated_quasi_identifiers = np.copy(quasi_identifiers)
 
         while not is_k_anonimus(aggregated_quasi_identifiers, self.k):

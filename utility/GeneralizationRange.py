@@ -41,7 +41,7 @@ class GeneralizationRange:
             self.min = None
             self.max = None
         if column_type == 'unordered':
-            self.values_set = np.unique(column_values)
+            self.values_set = list(set(column_values.tolist()))
         else:
             self.values_set = None
 
