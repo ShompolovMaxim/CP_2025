@@ -7,6 +7,7 @@ import numpy as np
 import random
 from GeneralizationLDiversityTimeOptimal import GeneralizationLDiversityTimeOptimal
 from utility.GeneralizationRange import GeneralizationRange
+from UnorderedClass import UnorderedClass
 
 class TestGeneralizationLDiversityTimeOptimal(unittest.TestCase):
 
@@ -128,6 +129,26 @@ class TestGeneralizationLDiversityTimeOptimal(unittest.TestCase):
         l_diverse_df, k_generalizations = GeneralizationLDiversityTimeOptimal(k, l, ['real', 'real', 'ordered', 'real']).depersonalize(df, sensitives_ids=[4])
         self.assertEqual(df, l_diverse_df)
         self.assertEqual(k_generalizations, 0)
+
+    def test_truly_unordered(self):
+        df = [
+            [UnorderedClass(1), UnorderedClass(1), UnorderedClass(1), UnorderedClass(1), 1],
+            [UnorderedClass(1), UnorderedClass(1), UnorderedClass(1), UnorderedClass(1), 2],
+            [UnorderedClass(2), UnorderedClass(2), UnorderedClass(2), UnorderedClass(2), 1],
+            [UnorderedClass(2), UnorderedClass(2), UnorderedClass(2), UnorderedClass(3), 2],
+        ]
+        generalized_value = GeneralizationRange(column_type='unordered', column_values=np.array([UnorderedClass(2), UnorderedClass(3)]))
+        df_expected = [
+            [UnorderedClass(1), UnorderedClass(1), UnorderedClass(1), UnorderedClass(1), 1],
+            [UnorderedClass(1), UnorderedClass(1), UnorderedClass(1), UnorderedClass(1), 2],
+            [UnorderedClass(2), UnorderedClass(2), UnorderedClass(2), generalized_value, 1],
+            [UnorderedClass(2), UnorderedClass(2), UnorderedClass(2), generalized_value, 2],
+        ]
+        k = 2
+        l = 2
+        l_diverse_df, k_generalizations = GeneralizationLDiversityTimeOptimal(k, l, ['unordered'] * 4).depersonalize(df, sensitives_ids=[4])
+        self.assertEqual(df_expected, l_diverse_df)
+        self.assertEqual(k_generalizations, 2)
 
     def test_random_df(self):
         seed = 1234

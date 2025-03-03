@@ -11,7 +11,10 @@ def dfs_rank_distances(df):
 def dfs_rank_general_dist(df, value_classes):
     sorted_columns = []
     for i in range(len(df[0])):
-        sorted_columns.append(sorted(df[:, i].tolist()))
+        if value_classes[i] != 'unordered':
+            sorted_columns.append(sorted(df[:, i].tolist()))
+        else:
+            sorted_columns.append(df[:, i].tolist())
 
     ranks = []
     for i in range(len(df[0])):

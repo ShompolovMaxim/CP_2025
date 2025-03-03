@@ -5,6 +5,7 @@ sys.path.append('../')
 import unittest
 import numpy as np
 import random
+from UnorderedClass import UnorderedClass
 from AggregationGreedyByOneEqualSizedGroups import AggregationGreedyByOneEqualSizedGroups
 from utility.GeneralizationRange import GeneralizationRange
 
@@ -128,6 +129,25 @@ class TestAggregationGreedyByOneEqualSizedGroups(unittest.TestCase):
         k_anonymus_df, group_size = AggregationGreedyByOneEqualSizedGroups(k, ['real', 'real', 'ordered', 'real']).depersonalize(df)
         self.assertEqual(df, k_anonymus_df)
         self.assertEqual(group_size, 1)
+
+    def test_truly_unordered(self):
+        df = [
+            [UnorderedClass(1), UnorderedClass(1), UnorderedClass(1), UnorderedClass(1)],
+            [UnorderedClass(1), UnorderedClass(1), UnorderedClass(1), UnorderedClass(1)],
+            [UnorderedClass(2), UnorderedClass(2), UnorderedClass(2), UnorderedClass(2)],
+            [UnorderedClass(2), UnorderedClass(2), UnorderedClass(2), UnorderedClass(3)],
+        ]
+        generalized_value = GeneralizationRange(column_type='unordered', column_values=np.array([UnorderedClass(2), UnorderedClass(3)]))
+        df_expected = [
+            [UnorderedClass(1), UnorderedClass(1), UnorderedClass(1), UnorderedClass(1)],
+            [UnorderedClass(1), UnorderedClass(1), UnorderedClass(1), UnorderedClass(1)],
+            [UnorderedClass(2), UnorderedClass(2), UnorderedClass(2), generalized_value],
+            [UnorderedClass(2), UnorderedClass(2), UnorderedClass(2), generalized_value],
+        ]
+        k = 2
+        k_anonymus_df, k_generalizations = AggregationGreedyByOneEqualSizedGroups(k, ['unordered'] * 4).depersonalize(df)
+        self.assertEqual(df_expected, k_anonymus_df)
+        self.assertEqual(k_generalizations, 2)
 
     def test_random_df(self):
         seed = 1234

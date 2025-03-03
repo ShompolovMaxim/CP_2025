@@ -62,7 +62,7 @@ class Datafly(Depersonalizator):
         if column_type == 'unordered':
             values = list(set(column.tolist()))
             values_count = dict()
-            for value in values:
+            for value in column.tolist():
                 if value not in values_count:
                     values_count[value] = 1
                 else:

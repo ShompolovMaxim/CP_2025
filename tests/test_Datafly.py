@@ -6,6 +6,7 @@ import unittest
 import numpy as np
 import random
 from Datafly import Datafly
+from UnorderedClass import UnorderedClass
 from utility.GeneralizationRange import GeneralizationRange
 
 class TestDatafly(unittest.TestCase):
@@ -32,6 +33,25 @@ class TestDatafly(unittest.TestCase):
         k = 2
         k_anonymus_df, k_changes = Datafly(k, ['real']*4).depersonalize(df)
         self.assertEqual(k_changes, 2)
+
+    def test_truly_unordered(self):
+        df = [
+            [UnorderedClass(1), UnorderedClass(1), UnorderedClass(1), UnorderedClass(1)],
+            [UnorderedClass(1), UnorderedClass(1), UnorderedClass(1), UnorderedClass(1)],
+            [UnorderedClass(2), UnorderedClass(2), UnorderedClass(2), UnorderedClass(2)],
+            [UnorderedClass(2), UnorderedClass(2), UnorderedClass(2), UnorderedClass(3)],
+        ]
+        generalized_value = GeneralizationRange(column_type='unordered', column_values=np.array([UnorderedClass(2), UnorderedClass(3)]))
+        df_expected = [
+            [UnorderedClass(1), UnorderedClass(1), UnorderedClass(1), UnorderedClass(1)],
+            [UnorderedClass(1), UnorderedClass(1), UnorderedClass(1), UnorderedClass(1)],
+            [UnorderedClass(2), UnorderedClass(2), UnorderedClass(2), generalized_value],
+            [UnorderedClass(2), UnorderedClass(2), UnorderedClass(2), generalized_value],
+        ]
+        k = 2
+        k_anonymus_df, k_generalizations = Datafly(k, ['unordered'] * 4).depersonalize(df)
+        self.assertEqual(df_expected, k_anonymus_df)
+        self.assertEqual(k_generalizations, 2)
 
     def test_normal_1(self):
         df = [

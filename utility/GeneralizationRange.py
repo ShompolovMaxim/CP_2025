@@ -32,7 +32,7 @@ def join_ordered(lhs, rhs, column_type):
 
 
 class GeneralizationRange:
-    def __init__(self, mn, mx, column_type='ordered', column_values=None):
+    def __init__(self, mn=None, mx=None, column_type='ordered', column_values=None):
         self.column_type = column_type
         if column_type == 'real' or column_type == 'ordered':
             self.min = mn

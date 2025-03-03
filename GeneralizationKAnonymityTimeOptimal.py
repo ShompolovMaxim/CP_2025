@@ -23,6 +23,8 @@ class GeneralizationKAnonymityTimeOptimal(Depersonalizator):
 
         my_dist = dfs_rank_general_dist(quasi_identifiers, self.quasi_identifiers_types)
         groups = group_by_dist(my_dist, self.k)
+        if groups is None:
+            return None, None, None
 
         n_generalizations = 0
         generalized_df = np.zeros(quasi_identifiers.shape, dtype=object)
@@ -30,10 +32,12 @@ class GeneralizationKAnonymityTimeOptimal(Depersonalizator):
             mask = quasi_identifiers[group[0]] == quasi_identifiers[group[0]]
             mn = quasi_identifiers[group[0]].copy()
             mx = quasi_identifiers[group[0]].copy()
-            for i in range(1, len(group)):
+            for i in range(len(group)):
                 mask = mask & (quasi_identifiers[group[0]] == quasi_identifiers[group[i]])
-                mn = np.minimum(mn, quasi_identifiers[group[i]])
-                mx = np.maximum(mx, quasi_identifiers[group[i]])
+                for j in range(mn.shape[0]):
+                    if self.quasi_identifiers_types[j] != 'unordered':
+                        mn[j] = min(mn[j], quasi_identifiers[group[i]][j])
+                        mx[j] = max(mn[j], quasi_identifiers[group[i]][j])
             rng = np.array(list(map(lambda x: GeneralizationRange(x[0], x[1], x[2], x[3]),
                                     zip(mn, mx, self.quasi_identifiers_types, np.transpose(quasi_identifiers[group])))))
             mask = ~mask
