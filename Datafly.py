@@ -112,5 +112,5 @@ class Datafly(Depersonalizator):
         for line in k_lines.keys():
             if len(k_lines[line]) < self.k:
                 for i in k_lines[line]:
-                    quasi_identifiers[i] = np.array([None] * len(quasi_identifiers[0]))
+                    quasi_identifiers[i] = np.array([np.nan] * len(quasi_identifiers[0]))
         return quasi_identifiers

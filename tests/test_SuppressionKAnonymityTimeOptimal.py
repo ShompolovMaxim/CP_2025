@@ -42,10 +42,10 @@ class TestSuppressionKAnonymityTimeOptimal(unittest.TestCase):
         k = 2
         k_anonymus_df, k_suppressions = SuppressionKAnonymityTimeOptimal(k).depersonalize(df)
         none_df = [
-            [None, None, None, None],
-            [None, None, None, None],
-            [None, None, None, None],
-            [None, None, None, None],
+            [np.nan, np.nan, np.nan, np.nan],
+            [np.nan, np.nan, np.nan, np.nan],
+            [np.nan, np.nan, np.nan, np.nan],
+            [np.nan, np.nan, np.nan, np.nan],
         ]
         self.assertEqual(k_anonymus_df, none_df)
         self.assertEqual(k_suppressions, 16)

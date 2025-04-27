@@ -18,9 +18,11 @@ def fill_left(size, other_list_1, other_list_2):
 class Depersonalizator(ABC):
     def __init__(self, output_defaults):
         self.output_defaults = output_defaults
+        self.identifiers_ids = None
+        self.quasi_identifiers_ids = None
+        self.sensitives_ids = None
 
     def depersonalize(self, df, identifiers_ids = None, quasi_identifiers_ids = 'left', sensitives_ids = None):
-        #identifiers=None, quasi_identifiers=None, sensitives=None):
         if len(df) == 0:
             if self.output_defaults is not None:
                 return df, *self.output_defaults
@@ -45,6 +47,10 @@ class Depersonalizator(ABC):
             quasi_identifiers_ids = fill_left(len(df[0]), identifiers_ids, sensitives_ids)
         if sensitives_ids == 'left':
             sensitives_ids = fill_left(len(df[0]), identifiers_ids, quasi_identifiers_ids)
+
+        self.identifiers_ids = identifiers_ids
+        self.quasi_identifiers_ids = quasi_identifiers_ids
+        self.sensitives_ids = sensitives_ids
 
         identifiers = df[:, identifiers_ids]
         quasi_identifiers = df[:, quasi_identifiers_ids]

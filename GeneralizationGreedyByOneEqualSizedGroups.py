@@ -4,7 +4,7 @@ from utility.GeneralizationRange import GeneralizationRange
 from utility.metrics import is_k_anonimus
 
 
-class AggregationGreedyByOneEqualSizedGroups(Depersonalizator):
+class GeneralizationGreedyByOneEqualSizedGroups(Depersonalizator):
     def __init__(self, k, quasi_identifiers_types = None):
         super().__init__([0])
         self.k = k
@@ -25,17 +25,17 @@ class AggregationGreedyByOneEqualSizedGroups(Depersonalizator):
 
         while not is_k_anonimus(aggregated_quasi_identifiers, self.k):
             group_size+=1
-            aggregated_quasi_identifiers = self.__aggregate__(np.copy(quasi_identifiers), group_size)
+            aggregated_quasi_identifiers = self.__generalize__(np.copy(quasi_identifiers), group_size)
 
         return None, aggregated_quasi_identifiers, group_size
 
-    def __aggregate__(self, quasi_identifiers, group_size):
+    def __generalize__(self, quasi_identifiers, group_size):
         for i in range(len(quasi_identifiers[0])):
-            quasi_identifiers[:, i] = self.__aggregate_column__(quasi_identifiers[:,i], group_size, self.quasi_identifiers_types[i])
+            quasi_identifiers[:, i] = self.__generalize_column__(quasi_identifiers[:, i], group_size, self.quasi_identifiers_types[i])
 
         return quasi_identifiers
 
-    def __aggregate_column__(self, column, group_size, column_type):
+    def __generalize_column__(self, column, group_size, column_type):
         group_values = []
         group_mins = []
         group_maxs = []

@@ -1,6 +1,7 @@
 from Depersonalizator import Depersonalizator
 import copy
 from utility.metrics import is_l_diverse
+import numpy as np
 
 class SuppressionLDiversityBaseline(Depersonalizator):
     def __init__(self, k, l):
@@ -22,7 +23,7 @@ class SuppressionLDiversityBaseline(Depersonalizator):
             next_col = 0
 
         cur = quasi_identifiers[row][col]
-        quasi_identifiers[row][col] = None
+        quasi_identifiers[row][col] = np.nan
         _, best_df_with_suppression, min_suppressed_with_suppression = \
             self.__depersonalize__(identifiers, quasi_identifiers, sensitives, next_row, next_col, k_suppressed + 1)
         quasi_identifiers[row][col] = cur
@@ -34,11 +35,11 @@ class SuppressionLDiversityBaseline(Depersonalizator):
             return None, best_df_without_suppression, min_suppressed_without_suppression
 
         if best_df_without_suppression is None:
-            best_df_with_suppression[row][col] = None
+            best_df_with_suppression[row][col] = np.nan
             return None, best_df_with_suppression, min_suppressed_with_suppression
 
         if min_suppressed_with_suppression < min_suppressed_without_suppression:
-            best_df_with_suppression[row][col] = None
+            best_df_with_suppression[row][col] = np.nan
             return None, best_df_with_suppression, min_suppressed_with_suppression
         else:
             return None, best_df_without_suppression, min_suppressed_without_suppression

@@ -1,16 +1,15 @@
 from Depersonalizator import Depersonalizator
 import numpy as np
 from utility.diatances import dfs_rank_general_dist
-from utility.groupping import group_by_dist_with_l_diverse
+from utility.groupping import group_by_dist
 from utility.GeneralizationRange import GeneralizationRange
-from utility.algorithms import generalization
+from utility.algorithms import aggregation
 
 
-class GeneralizationLDiversityTimeOptimal(Depersonalizator):
-    def __init__(self, k, l, quasi_identifiers_types = None):
+class AggregationKAnonymityTimeOptimal(Depersonalizator):
+    def __init__(self, k, quasi_identifiers_types = None):
         super().__init__([0])
         self.k = k
-        self.l = l
         self.quasi_identifiers_types = quasi_identifiers_types
 
     def __depersonalize__(self, identifiers, quasi_identifiers, sensitives):
@@ -24,10 +23,10 @@ class GeneralizationLDiversityTimeOptimal(Depersonalizator):
             self.quasi_identifiers_types = ['unordered'] * len(quasi_identifiers[0])
 
         my_dist = dfs_rank_general_dist(quasi_identifiers, self.quasi_identifiers_types)
-        groups = group_by_dist_with_l_diverse(my_dist, sensitives, self.k, self.l)
+        groups = group_by_dist(my_dist, self.k)
         if groups is None:
             return None, None, None
 
-        generalized_df, n_generalizations = generalization(groups, quasi_identifiers, self.quasi_identifiers_types)
+        generalized_df, n_replaced = aggregation(groups, quasi_identifiers, self.quasi_identifiers_types)
 
-        return None, generalized_df, n_generalizations
+        return None, generalized_df, n_replaced

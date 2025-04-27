@@ -2,6 +2,7 @@ from Depersonalizator import Depersonalizator
 import numpy as np
 from utility.diatances import dfs_hamming_distances
 from utility.groupping import group_by_dist_with_l_diverse
+from utility.algorithms import suppression
 
 class SuppressionLDiversityTimeOptimal(Depersonalizator):
     def __init__(self, k, l):
@@ -21,17 +22,7 @@ class SuppressionLDiversityTimeOptimal(Depersonalizator):
         if groups is None:
             return None, None, None
 
-        n_suppressions = 0
-        suppressed_df = np.zeros(quasi_identifiers.shape, dtype=object)
-        for group in groups:
-            mask = quasi_identifiers[group[0]] == quasi_identifiers[group[0]]
-            for i in range(1, len(group)):
-                mask = mask & (quasi_identifiers[group[0]] == quasi_identifiers[group[i]])
-            mask = ~mask
-            for i in group:
-                row = quasi_identifiers[i].copy()
-                row[mask] = None
-                n_suppressions += mask.sum()
-                suppressed_df[i] = row
+        n_suppressions, suppressed_df = suppression(groups, quasi_identifiers)
 
         return None, suppressed_df, n_suppressions
+

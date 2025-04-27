@@ -1,16 +1,21 @@
 from Depersonalizator import Depersonalizator
 import copy
-from utility.metrics import is_k_anonimus
+from utility.metrics import is_t_close
 import numpy as np
 
-class SuppressionKAnonymityBaseline(Depersonalizator):
-    def __init__(self, k):
+class SuppressionTClosenessBaseline(Depersonalizator):
+    def __init__(self, k, t, sensitives_types = None):
         super().__init__([0])
         self.k = k
+        self.t = t
+        self.sensitives_types = sensitives_types
 
     def __depersonalize__(self, identifiers, quasi_identifiers, sensitives, row=0, col=0, k_suppressed=0):
+        if self.sensitives_types is None:
+            self.sensitives_types = ['unordered'] * sensitives.shape[1]
+
         if col == 0 and row == len(quasi_identifiers):
-            if is_k_anonimus(quasi_identifiers, self.k):
+            if is_t_close(quasi_identifiers, sensitives, self.sensitives_types, self.k, self.t):
                 return None, copy.deepcopy(quasi_identifiers), k_suppressed
             else:
                 return None, None, None
@@ -42,5 +47,3 @@ class SuppressionKAnonymityBaseline(Depersonalizator):
             return None, best_df_with_suppression, min_suppressed_with_suppression
         else:
             return None, best_df_without_suppression, min_suppressed_without_suppression
-
-

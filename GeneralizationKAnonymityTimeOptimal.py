@@ -3,6 +3,7 @@ import numpy as np
 from utility.diatances import dfs_rank_general_dist
 from utility.groupping import group_by_dist
 from utility.GeneralizationRange import GeneralizationRange
+from utility.algorithms import generalization
 
 
 class GeneralizationKAnonymityTimeOptimal(Depersonalizator):
@@ -26,25 +27,6 @@ class GeneralizationKAnonymityTimeOptimal(Depersonalizator):
         if groups is None:
             return None, None, None
 
-        n_generalizations = 0
-        generalized_df = np.zeros(quasi_identifiers.shape, dtype=object)
-        for group in groups:
-            mask = quasi_identifiers[group[0]] == quasi_identifiers[group[0]]
-            mn = quasi_identifiers[group[0]].copy()
-            mx = quasi_identifiers[group[0]].copy()
-            for i in range(len(group)):
-                mask = mask & (quasi_identifiers[group[0]] == quasi_identifiers[group[i]])
-                for j in range(mn.shape[0]):
-                    if self.quasi_identifiers_types[j] != 'unordered':
-                        mn[j] = min(mn[j], quasi_identifiers[group[i]][j])
-                        mx[j] = max(mn[j], quasi_identifiers[group[i]][j])
-            rng = np.array(list(map(lambda x: GeneralizationRange(x[0], x[1], x[2], x[3]),
-                                    zip(mn, mx, self.quasi_identifiers_types, np.transpose(quasi_identifiers[group])))))
-            mask = ~mask
-            for i in group:
-                row = quasi_identifiers[i].copy()
-                row[mask] = rng[mask]
-                n_generalizations += mask.sum()
-                generalized_df[i] = row
+        generalized_df, n_generalizations = generalization(groups, quasi_identifiers, self.quasi_identifiers_types)
 
         return None, generalized_df, n_generalizations

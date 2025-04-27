@@ -44,10 +44,10 @@ class TestSuppressionLDiversityBaseline(unittest.TestCase):
         l = 2
         l_diverse_df, k_suppressions = SuppressionLDiversityBaseline(k, l).depersonalize(df, sensitives_ids=[4])
         none_df = [
-            [None, None, None, None, 1],
-            [None, None, None, None, 2],
-            [None, None, None, None, 2],
-            [None, None, None, None, 1],
+            [np.nan, np.nan, np.nan, np.nan, 1],
+            [np.nan, np.nan, np.nan, np.nan, 2],
+            [np.nan, np.nan, np.nan, np.nan, 2],
+            [np.nan, np.nan, np.nan, np.nan, 1],
         ]
         self.assertEqual(l_diverse_df, none_df)
         self.assertEqual(k_suppressions, 16)

@@ -55,8 +55,6 @@ def dfs_rank_general_dist(df, value_classes):
 
     my_dist = np.zeros((len(df), len(df)))
     for i in range(len(df)):
-        if i % 100 == 0:
-            print(i)
         for j in range(i + 1, len(df)):
             dist = np.abs(df_values_dists[i] - df_values_dists[j]).sum() + (df_unordered_values[i] != df_unordered_values[j]).sum()
             my_dist[i][j] = dist

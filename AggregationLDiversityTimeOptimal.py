@@ -3,10 +3,10 @@ import numpy as np
 from utility.diatances import dfs_rank_general_dist
 from utility.groupping import group_by_dist_with_l_diverse
 from utility.GeneralizationRange import GeneralizationRange
-from utility.algorithms import generalization
+from utility.algorithms import aggregation
 
 
-class GeneralizationLDiversityTimeOptimal(Depersonalizator):
+class AggregationLDiversityTimeOptimal(Depersonalizator):
     def __init__(self, k, l, quasi_identifiers_types = None):
         super().__init__([0])
         self.k = k
@@ -28,6 +28,6 @@ class GeneralizationLDiversityTimeOptimal(Depersonalizator):
         if groups is None:
             return None, None, None
 
-        generalized_df, n_generalizations = generalization(groups, quasi_identifiers, self.quasi_identifiers_types)
+        generalized_df, n_generalizations = aggregation(groups, quasi_identifiers, self.quasi_identifiers_types)
 
         return None, generalized_df, n_generalizations

@@ -40,7 +40,6 @@ def group_by_dist_with_l_diverse(dists, sensitives, group_size, l):
 
     i = 0
     while i < len(dists):
-        print(i)
         if grouped[i]:
             i += 1
             continue
