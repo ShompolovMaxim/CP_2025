@@ -3,7 +3,9 @@ import numpy as np
 from utility.algorithms import generalization, suppression, aggregation
 from abc import abstractmethod, ABC
 from utility.statistics import mode
-from utility.metrics import real_sample_distance, categorical_sample_distance, entropy_based_information_loss
+from utility.metrics import real_sample_distance, get_elements_frequencies
+from scipy.stats import entropy
+import random
 
 
 def count_column_params_for_loss(quasi_identifiers, quasi_identifiers_types):
@@ -160,21 +162,24 @@ class GroupJoinMetric(ABC):
 
 
 class GroupJoinKAnonymity(GroupJoinMetric):
-    def __init__(self, k, loss_function = lambda loss, size1, size2, k: loss):
+    def __init__(self, k, loss_function = lambda loss, size1, size2, k: loss, seed = None):
         super().__init__()
         self.k = k
         self.loss_function = loss_function
         self.group_join_method = None
+        self.seed = seed
 
     def get_groups(self, quasi_identifiers, sensitives):
+        if self.seed is not None:
+            random.seed(self.seed)
         groups = [[i] for i in range(quasi_identifiers.shape[0])]
         groups_loss = [0 for i in range(quasi_identifiers.shape[0])]
         while not self.check_k_anonymity(groups):
             best_pair = (0, 1)
             best_loss = -1
-            i = 0
+            i = random.randint(0, len(groups)-1)
             while len(groups[i]) >= self.k:
-                i += 1
+                i = random.randint(0, len(groups)-1)
             for j in range(len(groups)):
                 if i == j:
                     continue
@@ -211,22 +216,25 @@ class GroupJoinKAnonymity(GroupJoinMetric):
         return True
 
 class GroupJoinLDiversity(GroupJoinMetric):
-    def __init__(self, k, l, loss_function = lambda loss, size1, size2, k, l, k_sens: loss / sum(k_sens)):
+    def __init__(self, k, l, loss_function = lambda loss, size1, size2, k, l, k_sens: loss / sum(k_sens), seed = None):
         super().__init__()
         self.k = k
         self.l = l
         self.loss_function = loss_function
         self.group_join_method = None
+        self.seed = seed
 
     def get_groups(self, quasi_identifiers, sensitives):
+        if self.seed is not None:
+            random.seed(self.seed)
         groups = [[i] for i in range(quasi_identifiers.shape[0])]
         groups_loss = [0 for i in range(quasi_identifiers.shape[0])]
         while not self.check_l_diversity(groups, sensitives):
             best_pair = (0, 1)
             best_loss = -1
-            i = 0
+            i = random.randint(0, len(groups)-1)
             while self.check_l_diversity([list(range(len(groups[i])))], sensitives[groups[i],:]):
-                i += 1
+                i = random.randint(0, len(groups)-1)
             for j in range(len(groups)):
                 if i == j:
                     continue
@@ -273,7 +281,7 @@ class GroupJoinLDiversity(GroupJoinMetric):
         return True
 
 class GroupJoinTCloseness(GroupJoinMetric):
-    def __init__(self, k, t, sensitives_types, loss_function = lambda loss, size1, size2, k, t, t_sens: loss * sum(t_sens), always_use_entropy = False):
+    def __init__(self, k, t, sensitives_types, loss_function = lambda loss, size1, size2, k, t, t_sens: loss * sum(t_sens), always_use_entropy = False, seed = None):
         super().__init__()
         self.k = k
         self.t = t
@@ -282,17 +290,29 @@ class GroupJoinTCloseness(GroupJoinMetric):
         self.sensitives_types = sensitives_types
         self.always_use_entropy = always_use_entropy
         self.sensitives = None
+        self.elements_set = []
+        self.sensitives_frequencies = []
+        self.seed = seed
+
+    def prepare_statistics(self, sensitives):
+        self.sensitives = sensitives
+        for i in range(sensitives.shape[1]):
+            self.elements_set.append(set(sensitives[:, i].tolist()))
+            self.sensitives_frequencies.append(get_elements_frequencies(sensitives[:, i].tolist(), self.elements_set[i]))
 
     def get_groups(self, quasi_identifiers, sensitives):
+        if self.seed is not None:
+            random.seed(self.seed)
         groups = [[i] for i in range(quasi_identifiers.shape[0])]
         groups_loss = [0 for i in range(quasi_identifiers.shape[0])]
-        self.sensitives = sensitives
+        self.prepare_statistics(sensitives)
         while not self.check_t_closeness(groups, sensitives):
+            print(len(groups))
             best_pair = (0, 1)
             best_loss = -1
-            i = 0
+            i = random.randint(0, len(groups)-1)
             while self.check_t_closeness([list(range(len(groups[i])))], sensitives[groups[i],:]):
-                i += 1
+                i = random.randint(0, len(groups)-1)
             for j in range(len(groups)):
                 if i == j:
                     continue
@@ -319,7 +339,7 @@ class GroupJoinTCloseness(GroupJoinMetric):
         t_sens = []
         for i in range(all_sens.shape[1]):
             if self.always_use_entropy or self.sensitives_types[i] != 'real':
-                t_sens.append(categorical_sample_distance(all_sens[:,i], self.sensitives[:,i]))
+                t_sens.append(self.categorical_sample_distance(all_sens[:,i], i))
             else:
                 t_sens.append(real_sample_distance(all_sens[:,i], self.sensitives[:,i]))
         loss = 0
@@ -333,13 +353,20 @@ class GroupJoinTCloseness(GroupJoinMetric):
                 loss += self.group_join_method.loss_real(new_array[:, i], i)
         return self.loss_function(loss, a.shape[0], b.shape[0], self.k, self.t, t_sens)
 
+    def categorical_sample_distance(self, p, ind):
+        if not isinstance(p, list):
+            p = p.tolist()
+        p_frequencies = get_elements_frequencies(p, self.elements_set[ind])
+        avg_frequencies = (p_frequencies + self.sensitives_frequencies[ind]) / 2
+        return (entropy(p_frequencies, avg_frequencies) + entropy(self.sensitives_frequencies[ind], avg_frequencies)) / 2
+
     def check_t_closeness(self, groups, sensitives):
         for group in groups:
             if len(group) < self.k:
                 return False
             for i in range(sensitives.shape[1]):
                 if self.always_use_entropy or self.sensitives_types[i] != 'real':
-                    if categorical_sample_distance(sensitives[:,i], sensitives[group,i]) > self.t:
+                    if self.categorical_sample_distance(sensitives[group,i], i) > self.t:
                         return False
                 else:
                     if real_sample_distance(sensitives[:, i], sensitives[group, i]) > self.t:
@@ -366,9 +393,6 @@ class GroupJoinDepersonalizator(Depersonalizator):
         self.group_join_method.calc_columns_params(quasi_identifiers)
         groups = self.group_join_metric.get_groups(quasi_identifiers, sensitives)
         return None, *self.group_join_method.depersonalize(groups, quasi_identifiers)
-
-
-
 
 if __name__ == '__main__':
     #gjmth = GroupJoinGeneralization(['real']*4)
@@ -397,9 +421,6 @@ if __name__ == '__main__':
         [1, 4, 4, 4, 'a'],
         [1, 4, 4, 5, 'b'],
     ]
-    k = 2
-    l = 2
-    t = 1
     k_anonymus_df, k_generalizations = dep.depersonalize(df, sensitives_ids=[4])
     print(k_anonymus_df, k_generalizations)
 
