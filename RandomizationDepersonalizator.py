@@ -5,7 +5,7 @@ import bisect
 from Depersonalizator import Depersonalizator
 
 class RandomOrdered:
-    def __init__(self, sorted_values, values_type = 'ordered', scale = 1):
+    def __init__(self, sorted_values, values_type = 'ordered', scale = 0.25):
         self.sorted_values = sorted_values
         self.scale = scale
         self.values_type = values_type
@@ -14,18 +14,26 @@ class RandomOrdered:
         pos_left = bisect.bisect_left(self.sorted_values, x)
         pos = pos_left
         if self.values_type == 'ordered':
-            shift = int(np.random.normal(0, 1, 1)[0] * len(self.sorted_values) / 4 * self.scale)
-        else:
-            shift = int(np.random.normal(0, 1, 1)[0] * len(self.sorted_values) / 4)
-        new_pos = pos + shift
-        if new_pos < 0:
-            new_pos = 0
-        if new_pos >= len(self.sorted_values):
-            new_pos = len(self.sorted_values) - 1
-        if self.values_type == 'ordered':
+            shift = int(np.random.normal(0, 1, 1)[0] * len(self.sorted_values) * self.scale)
+            new_pos = pos + shift
+            if new_pos < 0:
+                new_pos = 0
+            if new_pos >= len(self.sorted_values):
+                new_pos = len(self.sorted_values) - 1
             return self.sorted_values[new_pos]
         else:
-            return x + (self.sorted_values[new_pos] - x) * self.scale
+            shift = np.random.normal(0, 1, 1)[0] * len(self.sorted_values) * self.scale
+            new_pos = pos + shift
+            if new_pos < 0:
+                return self.sorted_values[0]
+            elif new_pos >= len(self.sorted_values):
+                return self.sorted_values[-1]
+            else:
+                int_pos = int(new_pos)
+                fractional_part = new_pos - int(new_pos)
+                if int_pos == len(self.sorted_values) - 1:
+                    return self.sorted_values[int_pos]
+                return self.sorted_values[int_pos] + fractional_part * (self.sorted_values[int_pos + 1] - self.sorted_values[int_pos])
 
 class RandomizationBaselineDepersonalizator(Depersonalizator):
     def __init__(self, *, min_rand = None, max_rand = None, seed = None, rand_add = None, quasi_identifiers_types = None, scale = 1):

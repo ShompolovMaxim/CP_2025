@@ -89,9 +89,11 @@ class GroupJoinGeneralization(GroupJoinMethod):
         mx = self.columns_params[col_ind][1]
         arr_mn = np.min(array)
         arr_mx = np.max(array)
+        if arr_mx == arr_mn:
+            return 0
         loss = 0
         for el in array:
-            loss += ((arr_mn - el) ** 2 + (arr_mx - el) ** 2) / (mx - mn) ** 2
+            loss += ((arr_mn - el) ** 2 + (arr_mx - el) ** 2) / (2 * (mx - mn) * (arr_mx - arr_mn))
         return loss
 
     def loss_ordered(self, array, col_ind):
@@ -102,9 +104,11 @@ class GroupJoinGeneralization(GroupJoinMethod):
         for el in array:
             arr_min_rank = min(arr_min_rank, ranks[el])
             arr_max_rank = max(arr_max_rank, ranks[el])
+        if arr_min_rank == arr_max_rank:
+            return 0
         loss = 0
         for el in array:
-            loss += ((arr_min_rank - ranks[el]) ** 2 + (arr_max_rank - ranks[el]) ** 2) / (n - 1) ** 2
+            loss += ((arr_min_rank - ranks[el]) ** 2 + (arr_max_rank - ranks[el]) ** 2) / (2 * (n - 1) * (arr_max_rank - arr_min_rank))
         return loss
 
     def loss_unordered(self, array, col_ind):
@@ -307,7 +311,6 @@ class GroupJoinTCloseness(GroupJoinMetric):
         groups_loss = [0 for i in range(quasi_identifiers.shape[0])]
         self.prepare_statistics(sensitives)
         while not self.check_t_closeness(groups, sensitives):
-            print(len(groups))
             best_pair = (0, 1)
             best_loss = -1
             i = random.randint(0, len(groups)-1)

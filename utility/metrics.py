@@ -285,11 +285,11 @@ def my_by_element_distance_columns_ordered(initial_qi, qi):
         if not isinstance(qi[i], GeneralizationRange) and not isinstance(initial_qi[i], GeneralizationRange):
             s += abs(ranks[initial_qi[i]] - ranks[qi[i]]) / (qi.shape[0] - 1)
         elif not isinstance(qi[i], GeneralizationRange) and isinstance(initial_qi[i], GeneralizationRange):
-            s += ((ranks[qi[i]] - ranks[initial_qi[i].min])**2 + (ranks[qi[i]] - ranks[initial_qi[i].max])**2) / (qi.shape[0] - 1)**2
+            s += ((ranks[qi[i]] - ranks[initial_qi[i].min])**2 + (ranks[qi[i]] - ranks[initial_qi[i].max])**2) / (2 * (qi.shape[0] - 1) * (ranks[initial_qi[i].max] - ranks[initial_qi[i].min]))
         elif isinstance(qi[i], GeneralizationRange) and not isinstance(initial_qi[i], GeneralizationRange):
-            s += ((ranks[qi[i].min] - ranks[initial_qi[i]])**2 + (ranks[qi[i].max] - ranks[initial_qi[i]])**2) / (qi.shape[0] - 1)**2
-        elif isinstance(qi[i], GeneralizationRange) and isinstance(initial_qi[i], GeneralizationRange):
-            s += ((ranks[qi[i].min] - ranks[initial_qi[i].min])**2 + (ranks[qi[i].max] - ranks[initial_qi[i].max])**2) / (qi.shape[0] - 1)**2
+            s += ((ranks[qi[i].min] - ranks[initial_qi[i]])**2 + (ranks[qi[i].max] - ranks[initial_qi[i]])**2) / (2 * (qi.shape[0] - 1) * (ranks[qi[i].max] - ranks[qi[i].min]))
+        #elif isinstance(qi[i], GeneralizationRange) and isinstance(initial_qi[i], GeneralizationRange):
+        #    s += ((ranks[qi[i].min] - ranks[initial_qi[i].min])**2 + (ranks[qi[i].max] - ranks[initial_qi[i].max])**2) / (qi.shape[0] - 1)**2
     return s / qi.shape[0]
 
 def my_by_element_distance_columns_real(initial_qi, qi):
@@ -306,11 +306,11 @@ def my_by_element_distance_columns_real(initial_qi, qi):
         if not isinstance(qi[i], GeneralizationRange) and not isinstance(initial_qi[i], GeneralizationRange):
             s += abs(qi[i] - initial_qi[i]) / (mx - mn)
         elif not isinstance(qi[i], GeneralizationRange) and isinstance(initial_qi[i], GeneralizationRange):
-            s += ((qi[i] - initial_qi[i].min) ** 2 + (qi[i] - initial_qi[i].max) ** 2) / (mx - mn) ** 2
+            s += ((qi[i] - initial_qi[i].min) ** 2 + (qi[i] - initial_qi[i].max) ** 2) / (2 * (mx - mn) * (initial_qi[i].max - initial_qi[i].min))
         elif isinstance(qi[i], GeneralizationRange) and not isinstance(initial_qi[i], GeneralizationRange):
-            s += ((initial_qi[i] - qi[i].min) ** 2 + (initial_qi[i] - qi[i].max) ** 2) / (mx - mn) ** 2
-        elif isinstance(qi[i], GeneralizationRange) and isinstance(initial_qi[i], GeneralizationRange):
-            s += ((initial_qi[i].min - qi[i].min) ** 2 + (initial_qi[i].max - qi[i].max) ** 2) / (mx - mn) ** 2
+            s += ((initial_qi[i] - qi[i].min) ** 2 + (initial_qi[i] - qi[i].max) ** 2) / (2 * (mx - mn) * (qi[i].max - qi[i].min))
+        #elif isinstance(qi[i], GeneralizationRange) and isinstance(initial_qi[i], GeneralizationRange):
+        #    s += ((initial_qi[i].min - qi[i].min) ** 2 + (initial_qi[i].max - qi[i].max) ** 2) / (mx - mn) ** 2
     return s / qi.shape[0]
 
 def my_by_element_distance(initial_qi, qi, column_types = None):
