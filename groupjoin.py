@@ -395,6 +395,7 @@ class GroupJoinDepersonalizator(Depersonalizator):
 
         self.group_join_method.calc_columns_params(quasi_identifiers)
         groups = self.group_join_metric.get_groups(quasi_identifiers, sensitives)
+        self.groups = groups
         return None, *self.group_join_method.depersonalize(groups, quasi_identifiers)
 
 if __name__ == '__main__':
