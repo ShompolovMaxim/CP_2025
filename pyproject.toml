@@ -22,3 +22,6 @@ dependencies = [
 
 [tool.setuptools.packages]
 find = {}
+
+[project.scripts]
+depersonalize = "cp2025.depersonalize:main"

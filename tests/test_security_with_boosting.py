@@ -5,7 +5,7 @@ import numpy as np
 from cp2025.algorithms.RandomizationDepersonalizator import RandomizationBaselineDepersonalizator
 from cp2025.utility.boosting_security_score import get_boosting_security_score
 
-df = genfromtxt('../static/Bank_Personal_Loan_Modelling.csv', delimiter=',')
+df = genfromtxt('../data/Bank_Personal_Loan_Modelling.csv', delimiter=',')
 
 df = np.delete(df, (0), axis=0)
 df_copy = np.copy(df)

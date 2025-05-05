@@ -4,7 +4,7 @@ from sklearn.model_selection import train_test_split
 import numpy as np
 from cp2025.algorithms.GeneralizationKAnonymityTimeOptimal import GeneralizationKAnonymityTimeOptimal
 
-df = genfromtxt('../static/Bank_Personal_Loan_Modelling.csv', delimiter=',')
+df = genfromtxt('../data/Bank_Personal_Loan_Modelling.csv', delimiter=',')
 df = np.delete(df, (0), axis=0)
 df = np.delete(df, (0, 8, 9, 10, 11, 12, 13), axis=1)
 print(df[0])

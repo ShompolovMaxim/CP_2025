@@ -389,18 +389,6 @@ if __name__ == '__main__':
     #gjmtc = GroupJoinLDiversity(2, 2)
     gjmtc = GroupJoinTCloseness(2, 0.075, ['unordered'])
     dep = GroupJoinDepersonalizator(gjmth, gjmtc)
-    '''df = [
-        [1, 1, 1, 1],
-        [1, 1, 1, 1],
-        [2, 2, 2, 2],
-        [2, 2, 2, 3],
-    ]'''
-    '''df = [
-        [1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 2],
-        [2, 2, 2, 2, 2],
-        [2, 2, 2, 3, 1],
-    ]'''
     df = [
         [1, 1, 1, 1, 'a'],
         [1, 1, 1, 2, 'b'],

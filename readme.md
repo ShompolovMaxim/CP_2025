@@ -1,12 +1,16 @@
 ## Общее описание
 
-### Проект состоит из следующих элементов:
-* docs - файлы с документацией
-* static - статические файлы
-* tests - тесты к классам, реализующм алгоритмы обезличивания
-* utility - модули с функциями, использующимися несколькими алгоритмами обезличивания
-* класс Depersonalizator и классы с алгоритмами обезличивания расположениы в корневой директории
-* классы с алгоритмами обезличивания
+### Установка
+`pip install cp2025`
+
+### Проект состоит из следующих основных элементов:
+* `cp2025`
+  * `algorithms` - классы с алгоритмами обезличивания
+  * `utility` - модули с функциями, использующимися несколькими алгоритмами обезличивания
+  * `depersonalize.py` - файл со скриптом для быстрого обезличивания
+* `data` - файлы с датасетами для тестов
+* `docs` - файлы с документацией
+* `tests` - тесты к классам, реализующм алгоритмы обезличивания
 
 ## Методы оценки качества обезличивания
 
@@ -55,10 +59,25 @@
     * если оба элемента значения, то расстояние вычисляется по формуле int(a!=b)
     * если один элемент - множество (пусть второй), то int(a /in b) / |b|
     * если оба - множества, то |a \intersection b| / |a \union b|, то есть IOU
+#### Пример кода
+    from cp2025.utility.metrics import my_by_element_distance_columns_ordered
+    initial_qi = np.array([
+                [1, 1, 1, 1],
+                [1, 1, 1, 1],
+                [2, 2, 2, 2],
+                [2, 2, 2, 3],
+    ])
+    depersonalized_qi = np.array([
+                [1, 1, 1, 1],
+                [1, 1, 1, 1],
+                [2, 2, 2, 2.5],
+                [2, 2, 2, 2.5],
+    ])
+    my_by_element_distance_columns_ordered(initial_qi, depersonalized_qi)
 
 ### Интерфейс классов обезличивания:
 * параметры алгоритмов задаются в конструкторах классов
-* для обезличивания датасета необходимо передать его методу depersanolize
+* для обезличивания датасета необходимо передать его методу depersanolize (форматы list, numpy, DataFrame)
 * для того чтобы указать колонки-идентификаторы, необходимо передать в параметр identifiers_ids списток индексов этих колонок
 * для того чтобы указать колонки-квазиидентификаторы, необходимо передать в параметр quasi_identifiers_ids списток индексов этих колонок
 * для того чтобы указать колонки с чувствительной информацией, необходимо передать в параметр sensitives_ids списток индексов этих колонок
@@ -70,36 +89,74 @@
 * от данного класса наследуются все классы с алгоритмами обезличивания
 * данный класс преобразует данные из входного формата, описанного выше, в формат, удобный для обработки (разбивает на идентификаторы, квазиидентификаторы и чувствительную информацию), а также преобразует выходные данные алгоритмов в единый датасет
 
-### В проекте представлены следующие классы с алгоритмы (классы) обезличивания:
-- AggregationKAnonymityTimeOptimal - агрегация с разбиением на группы с взятием k-1 ближайших к данной строке с использованием описанного ниже расстояния между элементами
-- AggregationLDiversityTimeOptimal - алгоритм аналогичен AggregationKAnonymityTimeOptimal, но строки отбираются до тех пор, пока датасет не станет k-анонимным и l-разнообразным
-- Datafly - реализация алгоритма Datafly (https://www.cerias.purdue.edu/assets/pdf/bibtex_archive/2005-134.pdf) с автоматически создаваемым VGH
-- DistributedDataKAnonymityDepersonalization - алгоритм обмена данными между двумя владельцами с соблюдением k-анонимности, представленный в статье https://www.cerias.purdue.edu/assets/pdf/bibtex_archive/2005-134.pdf, но вместо DataFly используется groupjoin (см. ниже) 
-- GeneralizationGreedyByOneEqualSizedGroups - обобщение, при котором каждый столбец делится на группы с одинаковым для каждого столбца минимальным количеством элементов в столбце
-- GeneralizationKAnonymityTimeOptimal - обобщение с разбиением на группы с взятием k-1 ближайших к данной строке с использованием описанного ниже расстояния между элементами
-- GeneralizationLDiversityTimeOptimal - алгоритм аналогичен GeneralizationKAnonymityTimeOptimal, но строки отбираются до тех пор, пока датасет не станет k-анонимным и l-разнообразным
-- GroupJoin - алгоритм объединения групп строк, функция потерь для которых изменяется меньше всего, объединение происходит, пока не будет достигнута необходимая метрика (k-анонимность, l-разнообразие, t-близость)
-- TestIdentifierHasher - алгоритм хеширования идентификаторов
-- RandomizationDepersonalizator - добавляет к каждому значению случайную величину с распределением, задаваемым относительно исходных данных
-- Shuffler - переставляет строки в заданных столбцах
-- ShufflerInBatches - переставляет строки в каждой группе отдельно в заданных столбцах
-- SuppressionKAnonymityBaseline - перебирает все варианты подавления значений в датасете, в поиске варианта, достигающего k-анонимности с наименьшим количеством подавлений
-- SuppressionLDiversityBaseline - алгоритм, аналогичный SuppressionKAnonymityBaseline, но достигается l-разнообразие
-- SuppressionKAnonimityTimeOptimal - алгоритм, аналогичный GeneralizationKAnonymityTimeOptimal, но используется расстояние Хэмминга и подавление
-- SuppressionLDiversityTimeOptimal - алгоритм, аналогичный GeneralizationLDiversityTimeOptimal, но используется расстояние Хэмминга и подавление
-- SuppressionTClosenessBaseline - алгоритм, аналогичный SuppressionKAnonymityBaseline, но достигается t-близость
+### В проекте представлены следующие классы с алгоритмами (классы) обезличивания:
+- `AggregationKAnonymityTimeOptimal` - агрегация с разбиением на группы с взятием k-1 ближайших к данной строке с использованием описанного ниже расстояния между элементами
+- `AggregationLDiversityTimeOptimal` - алгоритм аналогичен AggregationKAnonymityTimeOptimal, но строки отбираются до тех пор, пока датасет не станет k-анонимным и l-разнообразным
+- `Datafly` - реализация алгоритма Datafly (https://www.cerias.purdue.edu/assets/pdf/bibtex_archive/2005-134.pdf) с автоматически создаваемым VGH
+- `DistributedDataKAnonymityDepersonalization` - алгоритм обмена данными между двумя владельцами с соблюдением k-анонимности, представленный в статье https://www.cerias.purdue.edu/assets/pdf/bibtex_archive/2005-134.pdf, но вместо DataFly используется groupjoin (см. ниже) 
+- `GeneralizationGreedyByOneEqualSizedGroups` - обобщение, при котором каждый столбец делится на группы с одинаковым для каждого столбца минимальным количеством элементов в столбце
+- `GeneralizationKAnonymityTimeOptimal` - обобщение с разбиением на группы с взятием k-1 ближайших к данной строке с использованием описанного ниже расстояния между элементами
+- `GeneralizationLDiversityTimeOptimal` - алгоритм аналогичен GeneralizationKAnonymityTimeOptimal, но строки отбираются до тех пор, пока датасет не станет k-анонимным и l-разнообразным
+- `GroupJoin` - алгоритм объединения групп строк, функция потерь для которых изменяется меньше всего, объединение происходит, пока не будет достигнута необходимая метрика (k-анонимность, l-разнообразие, t-близость)
+- `TestIdentifierHasher` - алгоритм хеширования идентификаторов
+- `RandomizationDepersonalizator` - добавляет к каждому значению случайную величину с распределением, задаваемым относительно исходных данных
+- `Shuffler` - переставляет строки в заданных столбцах
+- `ShufflerInBatches` - переставляет строки в каждой группе отдельно в заданных столбцах
+- `SuppressionKAnonymityBaseline` - перебирает все варианты подавления значений в датасете, в поиске варианта, достигающего k-анонимности с наименьшим количеством подавлений
+- `SuppressionLDiversityBaseline` - алгоритм, аналогичный SuppressionKAnonymityBaseline, но достигается l-разнообразие
+- `SuppressionKAnonimityTimeOptimal` - алгоритм, аналогичный GeneralizationKAnonymityTimeOptimal, но используется расстояние Хэмминга и подавление
+- `SuppressionLDiversityTimeOptimal` - алгоритм, аналогичный GeneralizationLDiversityTimeOptimal, но используется расстояние Хэмминга и подавление
+- `SuppressionTClosenessBaseline` - алгоритм, аналогичный SuppressionKAnonymityBaseline, но достигается t-близость
 
 ### Типы столбцов:
-* real - количественные данные
-* ordered - порядковые данные
-* unordered - номинальные данные
+* `real` - количественные данные
+* `ordered` - порядковые данные
+* `unordered` - номинальные данные
 
 ### Класс GeneralizationRange:
 * класс хранит обобщение нескольких номинальных значений или отрезок порядковых или количественных значений
 * для порядковых или количественных значений хранятся минимум и максимум отрезка
 * для номинальных - список уникальных значений
 * класс поддерживает сравнение на равенство, а для порядковых или количественных значений - отношение порядка
-* предполагается, что отношение порядка применяется только к непересекающимся отрезкам, иначе - неопределённое поведение 
+* предполагается, что отношение порядка применяется только к непересекающимся отрезкам, иначе - неопределённое поведение
+#### Пример кода
+    from cp2025.utility.GeneralizationRange import GeneralizationRange
+    rng1 = GeneralizationRange(1, 4, 'real')
+    rng2 = GeneralizationRange(5, 6, 'real')
+    if rng1 < rng2:
+        print("Correct!")
+    rng3 = GeneralizationRange(column_type='unordered', column_values=np.array(['a', 'b', 'c'])])
+
+### Описание скрипта для быстрого обезличивания
+#### Запуск скрипта
+    depersonalize [-h] -i INPUT [-f] [-o OUTPUT] [-a ALGORITHM]
+                  [-m {k,l,t}] [-r {s,g,a}] [-k K] [-l L] [-t T]
+                  [--qi_ids QI_IDS] [--i_ids I_IDS] [--s_ids S_IDS]
+                  [--types TYPES] [--s_types S_TYPES] [-s SEED]
+                  [--k_suppressed_lines K_SUPPRESSED_LINES]
+                  [--scale SCALE] [--cols2shuffle COLS2SHUFFLE]
+
+#### Флаги
+    -h, --help - справка
+    -i INPUT, --input INPUT - входной csv файл с датасетом
+    -f, --header - входной файл содержит шапку
+    -o OUTPUT, --output OUTPUT - выходной csv файл (по умолчанию в консоль)
+    -a ALGORITHM, --algorithm ALGORITHM - название алгоритма из: baseline, time_optimal, datafly, greedy, group_join, hasher, randomization, shuffler, batch_shuffler (по умолчанию group_join)
+    -m {k,l,t}, --metric {k,l,t} - метрика (k, l, t) соответствующая k-анонимности, l-разнообразнию, t-близости (k-анонимность по умолчанию)
+    -r {s,g,a}, --method {s,g,a} - метод обезличивания (s, g, f) соответствующий подавлению, обобщению, агрегации (подавление по умолчанию)
+    -k K - значение k для k-анонимности
+    -l L - значение l для l-разнообразия
+    -t T - значение t для t-близости 
+    --qi_ids QI_IDS - номера столбцов c квазиидентификаторами, разделённые запятыми ("1,3,5") или "left"
+    --i_ids I_IDS - номера столбцов c идентификаторами, разделённые запятыми ("1,3,5") или "left"
+    --s_ids S_IDS - номера столбцов c чувствительными значениями, разделённые запятыми ("1,3,5") или "left"
+    --types TYPES - типы столбцов с квазиидентификаторами, например: "rour" для "real, ordered, unordered, real"
+    --s_types S_TYPES - типы столбцов c чувствительными значениями, например: "rour" для "real, ordered, unordered, real" (используется в алгоритмах t-близости)
+    -s SEED, --seed SEED - сид для генератора случайных чисел  
+    --k_suppressed_lines K_SUPPRESSED_LINES - максимальное число подавленных строк для алгоритма Datafly
+    --scale SCALE - параметр scale для алгоритма рандомизации
+    --cols2shuffle COLS2SHUFFLE - номера столбцов, которые необходимо перемешать, разделённые запятой ("1,3,5")
+
 
 ## Описание алгоритмов обезличивания
 
@@ -133,6 +190,16 @@
   * для столбцов с числовыми значениями - среднее
 * из агрегированных значений составляются агрегированные строки
 * каждая строка группы заменяется на агрегированную строку
+#### Пример кода
+    from cp2025.algorithms.AggregationKAnonymityTimeOptimal import AggregationKAnonymityTimeOptimal
+    df = [
+      [1, 1, 1, 1],
+      [1, 1, 1, 1],
+      [2, 2, 2, 2],
+      [2, 2, 2, 3],
+    ]
+    k = 2
+    k_anonymus_df, k_replaced = AggregationKAnonymityTimeOptimal(k, ['real']*4).depersonalize(df)
 
 ### AggregationLDiversityTimeOptimal
 #### Краткое описание алгоритма
@@ -165,6 +232,17 @@
   * для столбцов с числовыми значениями - среднее
 * из агрегированных значений составляются агрегированные строки
 * каждая строка группы заменяется на агрегированную строку
+#### Пример кода
+    from cp2025.algorithms.AggregationLDiversityTimeOptimal import AggregationLDiversityTimeOptimal
+    df = [
+      [1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 2],
+      [2, 2, 2, 2, 2],
+      [2, 2, 2, 3, 1],
+    ]
+    k = 2
+    l = 2
+    l_diverse_df, k_replaced = AggregationLDiversityTimeOptimal(k, l, ['real']*4).depersonalize(df, sensitives_ids=[4])
 
 ### Datafly
 #### Краткое описание алгоритма
@@ -186,6 +264,16 @@
   * если значения столбца порядковые или числовые, то наиболее редкое значение объединяется с наиболее редким из соседних с ним по порядку при помощи класса GeneralizationRange
 * данные действия повторяются до тех пор, пока число строк, которые не относятся ни к одной группе из равных строк из хотя бы k элементов, не станет меньше k_suppressed_lines
 * оставшиеся строки подавляются
+#### Пример кода
+    from cp2025.algorithms.Datafly import Datafly
+    df = [
+      [1, 1, 1, 1],
+      [1, 1, 1, 1],
+      [2, 2, 2, 2],
+      [2, 2, 2, 3],
+    ]
+    k = 2
+    k_anonymus_df, k_changes = Datafly(k, ['real']*4).depersonalize(df)
 
 ### DistributedDataKAnonymityDepersonalization
 #### Краткое описание алгоритма
@@ -222,7 +310,34 @@
   * производится проверка на "равенство" по следующему принципу: если у первого и у второго существует хотя бы по одной группе, мощность пересечения которых не равна нулю, но меньше k, то разбиения на группы не равны, иначе - равны
   * если равны - завершение цикла
   * если нет - обезличивание на 1 шаг при помощи groupjoin (см. ниже)
-* как только разбиения равны, можно производить обмен обезличенными датасетами, что соответственно и происходит, и объединённый датасет становится значением атрибута joined_data каждого владельца 
+* как только разбиения равны, можно производить обмен обезличенными датасетами, что соответственно и происходит, и объединённый датасет становится значением атрибута joined_data каждого владельца
+#### Пример кода
+    from cp2025.algorithms.DistributedDataKAnonymityDepersonalization import DistributedDataOwnerKAnonymityDepersonalizator
+    qi1= np.array([
+        [1, 1, 1],
+        [1, 1, 2],
+        [3, 3, 3],
+        [3, 3, 4],
+        [4, 4, 5],
+        [4, 4, 4],
+    ], dtype=object)
+    qi2 = np.array([
+        [1, 1, 1],
+        [1, 1, 2],
+        [3, 3, 3],
+        [4, 4, 5],
+        [3, 3, 4],
+        [4, 4, 4],
+    ], dtype=object)
+    s1= np.array([])
+    s2= np.array([])
+    dep1 = DistributedDataOwnerKAnonymityDepersonalizator(qi1,s1,2, 7,seed=7,quasi_identifiers_types=['real']*qi1.shape[1])
+    dep2 = DistributedDataOwnerKAnonymityDepersonalizator(qi2,s2,2, 8, seed=7,quasi_identifiers_types=['real']*qi2.shape[1])
+    dep1.set_other_data_owner(dep2)
+    dep2.set_other_data_owner(dep1)
+    dep1.exchange_data()
+    print(dep1.joined_data)
+
 
 ### GeneralizationGreedyByOneEqualSizedGroups
 #### Краткое описание алгоритма
@@ -247,6 +362,16 @@
 * перебор останавливается, как только обобщённый датасет стал анонимным
 * анонимность всегда достижима, так как при group_size, равном размеру датасета, он будет k-анонимным
 * бинарный поиск не используется, так как не гарантировано, что для всех group_size больших подходящего group_size обобщённый датасет k-анонимен
+#### Пример кода
+    from cp2025.algorithms.GeneralizationGreedyByOneEqualSizedGroups import GeneralizationGreedyByOneEqualSizedGroups
+    df = [
+      [1, 1, 1, 1],
+      [1, 1, 1, 1],
+      [2, 2, 2, 2],
+      [2, 2, 2, 3],
+    ]
+    k = 2
+    k_anonymus_df, group_size = GeneralizationGreedyByOneEqualSizedGroups(k, ['real'] * 4).depersonalize(df)
 
 ### GeneralizationKAnonymityTimeOptimal
 #### Краткое описание алгоритма
@@ -275,6 +400,16 @@
 * для каждого столбца в каждой группе считается обобщённые значения объединением всех значений столбца в группе при помощи класса GeneralizationRange
 * из обобщённых значений составляются обобщённые строки
 * каждая строка группы заменяется на обобщённую строку
+#### Пример кода
+    from cp2025.algorithms.GeneralizationKAnonymityTimeOptimal import GeneralizationKAnonymityTimeOptimal
+    df = [
+      [1, 1, 1, 1],
+      [1, 1, 1, 1],
+      [2, 2, 2, 2],
+      [2, 2, 2, 3],
+    ]
+    k = 2
+    k_anonymus_df, k_generalizations = GeneralizationKAnonymityTimeOptimal(k, ['real']*4).depersonalize(df)
 
 ### GeneralizationLDiversityTimeOptimal
 #### Краткое описание алгоритма
@@ -304,6 +439,17 @@
 * для каждого столбца в каждой группе считается обобщённые значения объединением всех значений столбца в группе при помощи класса GeneralizationRange
 * из обобщённых значений составляются обобщённые строки
 * каждая строка группы заменяется на обобщённую строку
+#### Пример кода
+    from cp2025.algorithms.GeneralizationLDiversityTimeOptimal import GeneralizationLDiversityTimeOptimal
+    df = [
+      [1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 2],
+      [2, 2, 2, 2, 2],
+      [2, 2, 2, 3, 1],
+    ]
+    k = 2
+    l = 2
+    l_diverse_df, k_generalizations = GeneralizationLDiversityTimeOptimal(k, l, ['real']*4).depersonalize(df, sensitives_ids=[4])
 
 ### GroupJoin
 #### Краткое описание алгоритма
@@ -349,6 +495,20 @@
 * выбирается пара с наименьшим расстоянием и объединяется
 * процесс повторяется, пока не достигнута метрика
 * затем производится обезличивание и полученными группами с применением выбранного метода (подавления, обобщения, агрегации)
+#### Пример кода
+    from cp2025.algorithms.groupjoin import GroupJoinAggregation
+    from cp2025.algorithms.groupjoin import GroupJoinTCloseness
+    method = GroupJoinAggregation(['real']*4)
+    metric = GroupJoinTCloseness(2, 0.075, ['unordered'])
+    dep = GroupJoinDepersonalizator(gjmth, gjmtc)
+    df = [
+        [1, 1, 1, 1, 'a'],
+        [1, 1, 1, 2, 'b'],
+        [1, 1, 1, 3, 'c'],
+        [1, 4, 4, 4, 'a'],
+        [1, 4, 4, 5, 'b'],
+    ]
+    k_anonymus_df, k_generalizations = dep.depersonalize(df, sensitives_ids=[4])
 
 ### IdentifierHasher
 #### Краткое описание алгоритма
@@ -359,6 +519,16 @@
 Датасет с захешированными алгоритмом SHA256 идентификаторами
 #### Принцип работы алгоритма
 Производит поэлементное хеширование алгоритмом из hashlib
+#### Пример кода
+    from cp2025.algorithms.IdentifierHasher import IdentifierHasher
+    df = np.array([
+      [1, 1.1, 1, 1, 'a'],
+      [1, 1.2, 1, 2, 'b'],
+      [1, 1.3, 1, 3, 'c'],
+      [1, 4.4, 4, 4, 'a'],
+      [1, 4.5, 4, 5, 'b'],
+    ])
+    hashed_df = IdentifierHasher().depersonalize(df, identifiers_ids=[0, 1, 4], quasi_identifiers_ids=[2], sensitives_ids=[3])[0]
 
 ### RandomizationDepersonalizator
 #### Краткое описание алгоритма
@@ -382,6 +552,15 @@
   * для номинальных значений новое значение выбирается равновероятно из списка (с повторениями) всех значений столбца
   * для порядковых значений генерируется сдвиг (целочисленный, приведением к типу int значения из стандартного нормального распределения) и берётся значение из упорядоченного массива (с повторениями), индекс которого равен сумме индекса изначального значения и сдвига
   * для численных значений строится гистограмма, из неё выбирается (с повторениями) количество значений, равное количеству строк, а затем генерация происходит аналогично генерации для порядковых значений, но сдвиг вещественный, но затем производится линейная интерполяция имеющегося упорядоченного массива (как функции от индекса) и берётся значение, соответствующее сдвигу
+#### Пример кода
+    from cp2025.algorithms.RandomizationBaselineDepersonalizator import RandomizationBaselineDepersonalizator
+    df = [
+      [1, 'a', 0.1],
+      [0, 'a', 0],
+      [3, 'b', 0.3],
+      [5, 'b', 0.5],
+    ]
+    randomized_df = RandomizationBaselineDepersonalizator(quasi_identifiers_types=['real', 'unordered', 'ordered'], scale = 1).depersonalize(df)[0]
 
 ### Shuffler
 #### Краткое описание алгоритма
@@ -393,6 +572,16 @@
 Датасет с перемешанными строками в заданных столбцах
 #### Принцип работы алгоритма
 * производится перемешивание каждого столбца отдельно
+#### Пример кода
+    from cp2025.algorithms.Shuffler import Shuffler
+    from cp2025.utility.GeneralizationRange import GeneralizationRange
+    df = [
+      [1, GeneralizationRange(1, 2), "a", 1],
+      [2, GeneralizationRange(1, 3), "b", 2],
+      [3, GeneralizationRange(1, 4), "c", 3],
+      [4, GeneralizationRange(1, 5), "d", 4],
+    ]
+    df_shuffled = Shuffler(columns_ids_to_shuffle=[1, 2, 3], seed=0).depersonalize(df, identifiers_ids=[0, 1], sensitives_ids=[3])[0]
 
 ### ShufflerInBatches
 #### Краткое описание алгоритма
@@ -404,7 +593,15 @@
 Датасет с перемешанными строками в заданных столбцах, при этом строки меняются местами только с другими строками, входящими в одну группу
 #### Принцип работы алгоритма
 * производится перемешивание срок каждой группы каждого столбца отдельно для
-
+#### Пример кода
+    from cp2025.algorithms.ShufflerInBatches import ShufflerInBatches
+    df = [
+      [1, 1, 2, 1],
+      [1, 1, 2, 2],
+      [3, 3, 4, 3],
+      [3, 3, 4, 4],
+    ]
+    df_shuffled = ShufflerInBatches(columns_ids_to_shuffle=[1, 2, 3], seed=0).depersonalize(df, identifiers_ids=[0, 1], sensitives_ids=[3])[0]
 
 ### SuppressionKAnonymityBaseline
 #### Краткое описание алгоритма
@@ -417,6 +614,16 @@
 #### Принцип работы алгоритма
 * производится перебор всех возможных вариантов подавления отдельных значений
 * выбирается первый найденный вариант с наименьшим числом подавлений 
+#### Пример кода
+    from cp2025.algorithms.SuppressionKAnonymityBaseline import SuppressionKAnonymityBaseline
+    df = [
+      [1, 1, 1, 1],
+      [1, 1, 1, 1],
+      [2, 2, 2, 2],
+      [2, 2, 2, 3],
+    ]
+    k = 2
+    k_anonymus_df, k_suppressions = SuppressionKAnonymityBaseline(k).depersonalize(df)
 
 ### SuppressionLDiversityBaseline
 #### Краткое описание алгоритма
@@ -430,6 +637,17 @@
 #### Принцип работы алгоритма
 * производится перебор всех возможных вариантов подавления отдельных значений
 * выбирается первый найденный вариант с наименьшим числом подавлений 
+#### Пример кода
+    from cp2025.algorithms.SuppressionLDiversityBaseline import SuppressionLDiversityBaseline
+    df = [
+      [1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 2],
+      [2, 2, 2, 2, 2],
+      [2, 2, 2, 3, 1],
+    ]
+    k = 2
+    l = 2
+    l_diverse_df, k_suppressions = SuppressionLDiversityBaseline(k, l).depersonalize(df, sensitives_ids=[4])
 
 ### SuppressionKAnonimityTimeOptimal
 #### Краткое описание алгоритма
@@ -449,7 +667,17 @@
   * она группируется с k-1 самыми близкими к ней несгруппированными строками
   * эти действия повторяются пока не останется менее k строк
   * оставшиеся строки присоединяются к последней группе
-* для каждого столбца в каждой группе определяется, есть ли в данном столбце в данной группе разные значения; если есть, производится подавление всех значений столбца в этой группе 
+* для каждого столбца в каждой группе определяется, есть ли в данном столбце в данной группе разные значения; если есть, производится подавление всех значений столбца в этой группе
+#### Пример кода
+    from cp2025.algorithms.SuppressionKAnonymityTimeOptimal import SuppressionKAnonymityTimeOptimal
+    df = [
+      [1, 1, 1, 1],
+      [1, 1, 1, 1],
+      [2, 2, 2, 2],
+      [2, 2, 2, 3],
+    ]
+    k = 2
+    k_anonymus_df, k_suppressions = SuppressionKAnonymityTimeOptimal(k).depersonalize(df)
 
 ### SuppressionLDiversityTimeOptimal
 #### Краткое описание алгоритма
@@ -470,7 +698,18 @@
   * она группируется с необходимым количеством самых близких к ней несгруппированных строк для того, чтобы группа стала содержать хотя бы k строк и для каждого чувствительного столбца - l различных значений
   * эти действия повторяются пока не останется менее k строк
   * оставшиеся строки присоединяются к последней группе
-* для каждого столбца в каждой группе определяется, есть ли в данном столбце в данной группе разные значения; если есть, производится подавление всех значений столбца в этой группе 
+* для каждого столбца в каждой группе определяется, есть ли в данном столбце в данной группе разные значения; если есть, производится подавление всех значений столбца в этой группе
+#### Пример кода
+    from cp2025.algorithms.SuppressionLDiversityTimeOptimal import SuppressionLDiversityTimeOptimal
+    df = [
+      [1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 2],
+      [2, 2, 2, 2, 2],
+      [2, 2, 2, 3, 1],
+    ]
+    k = 2
+    l = 2
+    l_diverse_df, k_suppressions = SuppressionLDiversityTimeOptimal(k, l).depersonalize(df, sensitives_ids=[4])
 
 ### SuppressionTClosenessBaseline
 #### Краткое описание алгоритма
@@ -484,3 +723,15 @@
 #### Принцип работы алгоритма
 * производится перебор всех возможных вариантов подавления отдельных значений
 * выбирается первый найденный вариант с наименьшим числом подавлений 
+#### Пример кода
+    from cp2025.algorithms.SuppressionTClosenessBaseline import SuppressionTClosenessBaseline
+    df = [
+      [1, 1, 1, 1, 'a'],
+      [1, 1, 1, 2, 'b'],
+      [1, 1, 1, 3, 'c'],
+      [1, 4, 4, 4, 'a'],
+      [1, 4, 4, 5, 'b'],
+    ]
+    k = 2
+    t = 0.075
+    t_close_df, k_suppressions = SuppressionTClosenessBaseline(k, t, sensitives_types=['unordered']).depersonalize(df,sensitives_ids=[4])

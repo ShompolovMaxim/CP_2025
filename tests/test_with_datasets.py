@@ -10,8 +10,7 @@ from cp2025.utility.metrics import my_by_element_distance
 from cp2025.algorithms.groupjoin import GroupJoinAggregation, GroupJoinDepersonalizator, GroupJoinTCloseness
 from cp2025.algorithms.DistributedDataKAnonymityDepersonalization import DistributedDataOwnerKAnonymityDepersonalizator
 
-
-df = genfromtxt('../static/Bank_Personal_Loan_Modelling.csv', delimiter=',')
+df = genfromtxt('../data/Bank_Personal_Loan_Modelling.csv', delimiter=',')
 df = np.delete(df, (0), axis=0)
 df = np.delete(df, (0, 8, 9, 10, 11, 12, 13), axis=1)
 '''gjmth = GroupJoinAggregation(['real']*6)

@@ -1,6 +1,5 @@
 from cp2025.algorithms.Depersonalizator import Depersonalizator
 from cp2025.utility.GeneralizationRange import GeneralizationRange
-from cp2025.tests.UnorderedClass import UnorderedClass
 import numpy as np
 
 class Shuffler(Depersonalizator):
