@@ -156,7 +156,7 @@ def main():
     if args.k_suppressed_lines is not None:
         k_suppressed_lines = int(args.k_suppressed_lines)
 
-    scale = None
+    scale = 1
     if args.scale is not None:
         scale = float(args.scale)
 
