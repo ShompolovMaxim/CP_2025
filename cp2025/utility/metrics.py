@@ -158,7 +158,7 @@ def get_count_dict(l):
             count[el] = 1
     return count
 
-def get_most_common_ken_from_count_dict(counts):
+def get_most_common_key_from_count_dict(counts):
     most_common = -1
     for key in counts.keys():
         if most_common == -1 or counts[most_common] < counts[key]:
@@ -194,7 +194,7 @@ def adversarial_knowledge_gain(depersonalized_qi, sensitives):
 
 def adversarial_accuracy_gain(depersonalized_qi, sensitives):
     s_count = get_count_dict(sensitives)
-    most_common_s = get_most_common_ken_from_count_dict(s_count)
+    most_common_s = get_most_common_key_from_count_dict(s_count)
 
     equivalence_classes_ids = dict()
     for i in range(depersonalized_qi.shape[0]):
@@ -207,7 +207,7 @@ def adversarial_accuracy_gain(depersonalized_qi, sensitives):
     a_acc = -s_count[most_common_s] / len(sensitives)
     for class_key in equivalence_classes_ids.keys():
         s_count = get_count_dict([sensitives[i] for i in equivalence_classes_ids[class_key]])
-        most_common_s = get_most_common_ken_from_count_dict(s_count)
+        most_common_s = get_most_common_key_from_count_dict(s_count)
         a_acc += s_count[most_common_s] / len(sensitives)
 
     return a_acc
