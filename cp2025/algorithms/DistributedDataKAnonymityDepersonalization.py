@@ -1,7 +1,7 @@
 import random
 import numpy as np
 from cp2025.utility.algorithms import mode, suppression, aggregation
-from groupjoin import GroupJoinKAnonymity, GroupJoinAggregation, GroupJoinDepersonalizator
+from cp2025.algorithms.groupjoin import GroupJoinKAnonymity, GroupJoinAggregation, GroupJoinDepersonalizator
 from cp2025.utility.utility import count_column_params_for_my_loss
 from ecpy.curves import Curve, Point
 

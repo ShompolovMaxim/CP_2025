@@ -3,6 +3,8 @@ from numpy import genfromtxt
 from sklearn.model_selection import train_test_split
 import numpy as np
 from cp2025.algorithms.RandomizationDepersonalizator import RandomizationBaselineDepersonalizator
+from cp2025.algorithms.GeneralizationKAnonymityTimeOptimal import GeneralizationKAnonymityTimeOptimal
+from cp2025.algorithms.SuppressionKAnonymityTimeOptimal import SuppressionKAnonymityTimeOptimal
 from cp2025.utility.boosting_security_score import get_boosting_security_score
 
 df = genfromtxt('../data/Bank_Personal_Loan_Modelling.csv', delimiter=',')
@@ -10,14 +12,17 @@ df = genfromtxt('../data/Bank_Personal_Loan_Modelling.csv', delimiter=',')
 df = np.delete(df, (0), axis=0)
 df_copy = np.copy(df)
 df = np.delete(df, (0, 8, 9, 10, 11, 12, 13), axis=1)
+df = df
 
 k = 2
 scale = 0.1
 train_initial, test_initial = train_test_split(df, test_size=0.2, random_state=42, shuffle=False)
-#train, k_generalizations_train = GeneralizationKAnonymityTimeOptimal(k, 7 * ['real']).depersonalize(train_initial)
-#test, k_generalizations_test = GeneralizationKAnonymityTimeOptimal(k, 7 * ['real']).depersonalize(test_initial)
-train = RandomizationBaselineDepersonalizator(quasi_identifiers_types=['real']*7, scale = scale).depersonalize(train_initial)[0]
-test = RandomizationBaselineDepersonalizator(quasi_identifiers_types=['real']*7, scale = scale).depersonalize(test_initial)[0]
+train, k_generalizations_train = GeneralizationKAnonymityTimeOptimal(k, 7 * ['real']).depersonalize(train_initial)
+test, k_generalizations_test = GeneralizationKAnonymityTimeOptimal(k, 7 * ['real']).depersonalize(test_initial)
+#train, k_generalizations_train = SuppressionKAnonymityTimeOptimal(k).depersonalize(train_initial)
+#test, k_generalizations_test = SuppressionKAnonymityTimeOptimal(k).depersonalize(test_initial)
+#train = RandomizationBaselineDepersonalizator(quasi_identifiers_types=['real']*7, scale = scale).depersonalize(train_initial)[0]
+#test = RandomizationBaselineDepersonalizator(quasi_identifiers_types=['real']*7, scale = scale).depersonalize(test_initial)[0]
 
 #train, test = train_test_split(k_anonymus_df, test_size=0.2, random_state=42, shuffle=False)
 

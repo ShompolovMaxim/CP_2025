@@ -121,10 +121,13 @@ class GroupJoinAggregation(GroupJoinMethod):
     def loss_ordered(self, array, col_ind):
         ranks = self.columns_params[col_ind][0]
         n = self.columns_params[col_ind][1]
-        md = np.median(array)
+        l = np.array(array.tolist())
+        l = np.sort(l)
+        md = l[len(l) // 2]
+        #md = np.median(array)
         loss = 0
         for el in array:
-            loss += abs(ranks[el] - md) / (n - 1)
+            loss += abs(ranks[el] - ranks[md]) / (n - 1)
         return loss
 
     def loss_unordered(self, array, col_ind):

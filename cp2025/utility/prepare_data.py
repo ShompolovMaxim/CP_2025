@@ -7,12 +7,17 @@ from statistics import mode
 
 def fill_nulls(train, test, column_type = 'unordered'):
     value = np.nan
-    if column_type == 'unordered':
-        value = mode(train[~pd.isna(train)])
-    if column_type == 'ordered':
-        value = np.median(train[~pd.isna(train)])
-    if column_type == 'real':
-        value = np.mean(train[~pd.isna(train)])
+    if (~pd.isna(train)).sum() == 0:
+        value = 0
+    else:
+        if column_type == 'unordered':
+            value = mode(train[~pd.isna(train)])
+        if column_type == 'ordered':
+            l = np.array(train[~pd.isna(train)].tolist())
+            l = np.sort(l)
+            value = l[len(l)//2]
+        if column_type == 'real':
+            value = np.mean(train[~pd.isna(train)])
 
     train[pd.isna(train)] = value
     test[pd.isna(test)] = value

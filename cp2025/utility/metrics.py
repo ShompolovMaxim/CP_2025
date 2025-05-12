@@ -116,10 +116,10 @@ def find_l_diverse(quasi_identifiers, sensitives):
     sensitive_values = dict()
     for identifiers, sensitive in zip(quasi_identifiers, sensitives):
         if tuple(identifiers.tolist()) in sensitive_values:
-            sensitive_values[tuple(identifiers.tolist())].add(sensitive)
+            sensitive_values[tuple(identifiers.tolist())].append(sensitive)
         else:
-            sensitive_values[tuple(identifiers.tolist())] = set()
-            sensitive_values[tuple(identifiers.tolist())].add(sensitive)
+            sensitive_values[tuple(identifiers.tolist())] = list()
+            sensitive_values[tuple(identifiers.tolist())].append(sensitive)
     min_l = -1
     for key in sensitive_values.keys():
         batch_sensitives = np.stack(list(sensitive_values[key]), axis=0)
@@ -221,11 +221,11 @@ def average_equivalence_class_size(qi):
 def distinctness(df):
     rows_set = set()
     for i in range(df.shape[0]):
-        rows_set.add(tuple(df.iloc[i].tolist()))
+        rows_set.add(tuple(df[i].tolist()))
     return len(rows_set) / df.shape[0]
 
 def changed_proportion(initial_qi, qi):
-    return (initial_qi != qi).sum()
+    return (initial_qi != qi).sum() / (qi.shape[0]* qi.shape[1])
 
 def non_uniform_entropy(df):
     df_tuples = [tuple(df[i].tolist()) for i in range(df.shape[0])]
@@ -281,6 +281,8 @@ def my_by_element_distance_columns_ordered(initial_qi, qi):
             s += 1
         if is_nan(initial_qi[i]) or is_nan(qi[i]):
             continue
+        if isinstance(qi[i], GeneralizationRange) and qi[i].min == qi[i].max:
+            qi[i] = qi[i].min
         if not isinstance(qi[i], GeneralizationRange) and not isinstance(initial_qi[i], GeneralizationRange):
             s += abs(ranks[initial_qi[i]] - ranks[qi[i]]) / (qi.shape[0] - 1)
         elif not isinstance(qi[i], GeneralizationRange) and isinstance(initial_qi[i], GeneralizationRange):
@@ -302,6 +304,8 @@ def my_by_element_distance_columns_real(initial_qi, qi):
             s += 1
         if is_nan(initial_qi[i]) or is_nan(qi[i]):
             continue
+        if isinstance(qi[i], GeneralizationRange) and qi[i].min == qi[i].max:
+            qi[i] = qi[i].min
         if not isinstance(qi[i], GeneralizationRange) and not isinstance(initial_qi[i], GeneralizationRange):
             s += abs(qi[i] - initial_qi[i]) / (mx - mn)
         elif not isinstance(qi[i], GeneralizationRange) and isinstance(initial_qi[i], GeneralizationRange):

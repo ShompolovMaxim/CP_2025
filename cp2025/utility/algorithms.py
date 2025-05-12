@@ -55,7 +55,10 @@ def aggregation(groups, quasi_identifiers, quasi_identifiers_types):
                 if quasi_identifiers_types[i] == 'real':
                     aggregated_row[i] = np.mean(quasi_identifiers[group, i])
                 elif quasi_identifiers_types[i] == 'ordered':
-                    aggregated_row[i] = np.median(quasi_identifiers[group, i])
+                    l = np.array(quasi_identifiers[group, i].tolist())
+                    l = np.sort(l)
+                    aggregated_row[i] = l[len(l) // 2]
+                    #aggregated_row[i] = np.median(quasi_identifiers[group, i])
                 elif quasi_identifiers_types[i] == 'unordered':
                     aggregated_row[i] = mode(quasi_identifiers[group, i])
                 else:

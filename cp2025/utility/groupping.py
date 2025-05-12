@@ -52,7 +52,7 @@ def group_by_dist_with_l_diverse(dists, sensitives, group_size, l):
             if not grouped[i_dists[j][1]]:# and sensitives[j] not in group_sensitives:
                 group.append(i_dists[j][1])
                 grouped[i_dists[j][1]] = True
-                group_sensitives.append(tuple(sensitives[j]))
+                group_sensitives.append(tuple(sensitives[i_dists[j][1]]))
             j += 1
         if len(group) < group_size or not is_list_l_diverse(group_sensitives, l):
             if len(groups) == 0:

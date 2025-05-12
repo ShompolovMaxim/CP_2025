@@ -1,6 +1,7 @@
 from sklearn.ensemble import GradientBoostingClassifier
 import numpy as np
 import random
+from sklearn.model_selection import GridSearchCV
 
 def get_boosting_security_score(train, train_depersonalized, test, test_depersonalized):
     similar_train = np.concatenate((train, train_depersonalized), axis=1)
@@ -13,10 +14,16 @@ def get_boosting_security_score(train, train_depersonalized, test, test_deperson
     different_train = np.concatenate((train, different_train_depersonalized), axis=1)
     boosting_train = np.concatenate((similar_train, different_train), axis=0)
 
+    parameters = {
+        #'n_estimators': list(range(10, 201, 15)),
+        # 'alpha':[i / 10 for i in range(1, 10, 4)],
+        #'min_samples_leaf': [i for i in range(1, 6)],
+    }
     clf = GradientBoostingClassifier(random_state=0, n_estimators=1000)
     clf.fit(boosting_train, new_y)
 
     correct_count = 0
+    #agg_prob = 1
     for i in range(test.shape[0]):
         copied_object = np.zeros(test_depersonalized.shape)
         for j in range(test_depersonalized.shape[0]):
@@ -29,5 +36,7 @@ def get_boosting_security_score(train, train_depersonalized, test, test_deperson
                 max_prob_id = j
         if max_prob_id == i:
             correct_count += 1
+        #agg_prob += probs[i, 0] / probs[:,0].sum()
 
-    return correct_count / test.shape[0]
+
+    return 1 - correct_count / test.shape[0]#agg_prob / test.shape[0]

@@ -29,7 +29,7 @@ class Shuffler(Depersonalizator):
         return identifiers, quasi_identifiers
 
 if __name__ == "__main__":
-    df = [
+     '''df = [
         [1, GeneralizationRange(1, 2), "a", UnorderedClass(1), 1],
         [2, GeneralizationRange(1, 3), "b", UnorderedClass(2), 2],
         [3, GeneralizationRange(1, 4), "c", UnorderedClass(3), 3],
@@ -37,5 +37,5 @@ if __name__ == "__main__":
     ]
     df_shuffled = Shuffler(columns_ids_to_shuffle=[1, 2, 3, 4], seed=0).depersonalize(df, identifiers_ids=[0, 1], sensitives_ids=[4])[0]
     for row in df_shuffled:
-        print(*row)
+        print(*row)'''
 
